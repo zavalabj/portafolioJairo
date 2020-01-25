@@ -2,16 +2,18 @@
 require "./vendor/autoload.php";
 require "./functions/encrypter.php";
 require "./functions/tokenValidation.php";
+require "./models/pagesModel.php";
 
 use Pecee\SimpleRouter\SimpleRouter;
 
 
 SimpleRouter::get('/', function () {
-    echo "kk";
+    include('./views/principal.html');
 });
 
 SimpleRouter::get('/proyecto/{id}', function($id){
-    
+    $response = pagesModel::fetchByID($id);
+    echo $response;
 })->where(['id','[0-9]+']);
 
 SimpleRouter::setDefaultNamespace('\Demo\Controllers');
