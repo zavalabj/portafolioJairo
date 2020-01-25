@@ -63,22 +63,42 @@
   <!-- About Section -->
   <div class="w3-container w3-padding-32" id="about">
     <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Descripción</h3>
+    <font color="#525254">
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint
       occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
       laboris nisi ut aliquip ex ea commodo consequat.
     </p>
+    </font>
   </div>
     <!-- Image  -->
     <div class="w3-display-container w3-center">
         <img src="images/evidencia.jpg" class="w3-image" style="width:70%">
     </div>
     <!-- Code Section  -->
-    <div class="w3-container w3-padding-32" id="code">
-        <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Código</h3>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint
-          occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-          laboris nisi ut aliquip ex ea commodo consequat.
-        </p>
+    
+    <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Código</h3>
+        
+    <?prettify linenums=1?>
+    <pre class="prettyprint">
+    class Voila {
+        public:
+            // Voila
+            static const string VOILA = "Voila";
+            
+            // will not interfere with embedded <a href="#voila2">tags</a>.
+    }
+    </pre>
+     
+
+    <!-- Conclusion Section  -->  
+      <div class="w3-container w3-padding-32" id="conclusion">
+        <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Conclusión</h3>
+        <font color="#525254">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint
+              occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+              laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+        </font>
       </div>
 <!-- End page content -->
 </div>
@@ -108,5 +128,8 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
 <script src="/views/js/google-map.js"></script>
 <script src="/views/js/main.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>-->
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=c&amp;skin=sons-of-obsidian"></script>
+
 </body>
 </html>
