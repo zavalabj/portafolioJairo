@@ -11,6 +11,11 @@ SimpleRouter::get('/', function () {
     include('./views/principal.html');
 });
 
+SimpleRouter::get('/getcards', function(){
+    $response = pagesModel::getAllCards();
+    echo $response;
+});
+
 SimpleRouter::get('/proyecto/{id}', function($id){
     $response = pagesModel::fetchByID($id);
     echo $response;

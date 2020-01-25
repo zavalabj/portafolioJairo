@@ -1,10 +1,10 @@
 <?php
 
 class connection{
-	private $user = "";
-	protected $password = "";
-	private $database_name = "";
-	private $server_name = "";
+	private $user = "projects_j_users";
+	protected $password = "_A=r#baHA4BG";
+	private $database_name = "projectsJairo";
+	private $server_name = "localhost";
 
 	function doConnection(){
 		try {

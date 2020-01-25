@@ -15,4 +15,13 @@ class pagesModel{
         return $controllerResponse;
     }
 
+    public function getAllCards(){
+        $dbc = new connection();
+	    $serverResponse = $dbc->doConnection();
+        $con = $serverResponse['connection'];
+        $controller = new PagesController($con);
+
+        $controllerResponse = $controller->fetchAll();
+        return $controllerResponse;
+    }
 }
