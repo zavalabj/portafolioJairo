@@ -10,6 +10,10 @@ SimpleRouter::get('/', function () {
     echo "kk";
 });
 
+SimpleRouter::get('/proyecto/{id}', function($id){
+    
+})->where(['id','[0-9]+']);
+
 SimpleRouter::setDefaultNamespace('\Demo\Controllers');
 
 // Start the routing
