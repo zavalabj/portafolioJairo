@@ -8,7 +8,7 @@ use Pecee\SimpleRouter\SimpleRouter;
 
 
 SimpleRouter::get('/', function () {
-    include('./views/principal.html');
+    include('./views/principal.php');
 });
 
 SimpleRouter::get('/getcards', function(){

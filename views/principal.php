@@ -64,6 +64,12 @@
  <div class="w3-container w3-padding-32" id="projects">
   <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Proyectos</h3>
 </div>
+
+
+<div id="projects">
+
+</div>
+
 <!--
 <div class="w3-row-padding">
   <div class="w3-col l3 m6 w3-margin-bottom">
@@ -72,8 +78,8 @@
       <img src="/views/images/ejemploDataMining.jpeg" alt="Project" style="width:120%">
     </div></a>
   </div>
-</div>
--->
+</div>-->
+
  
   <!-- Sección Nosotros -->
   <div class="w3-container w3-padding-32" id="about">
@@ -142,5 +148,22 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
 <script src="/views/js/google-map.js"></script>
 <script src="/views/js/main.js"></script>
+
+<script>
+
+  function setProjectElements(title, image){
+    var element = document.getElementById("projects");
+    jQuery.ajax({
+      url: 'http://localhost:8989/getcards',
+      success: function(data){
+        alert(data);
+      },
+      error: function(event, xhr){
+
+      }
+    });
+  }
+  setProjectElements('caca', '/views/images/ejemploDataMining.jpeg');
+</script>
 </body>
 </html>
