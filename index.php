@@ -8,7 +8,7 @@ use Pecee\SimpleRouter\SimpleRouter;
 
 
 SimpleRouter::get('/', function () {
-    include('./views/principal.php');
+    include('./views/principal.html');
 });
 
 SimpleRouter::get('/getcards', function(){
@@ -22,7 +22,7 @@ SimpleRouter::get('/getprojectdata/{id}', function($id){
 })->where(['id','[0-9]+']);
 
 SimpleRouter::get('/proyecto/{id}', function($id){
-    include('./views/proyecto.php');
+    include('./views/proyecto.html');
 })->where(['id','[0-9]+']);
 
 SimpleRouter::setDefaultNamespace('\Demo\Controllers');
