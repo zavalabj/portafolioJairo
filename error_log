@@ -1,0 +1,52 @@
+[26-Jan-2020 03:36:11 UTC] PHP Parse error:  syntax error, unexpected 'linenums' (T_STRING) in /home/soqtt3cpu44z/portafolioJairo/views/proyecto.html on line 81
+[26-Jan-2020 03:36:58 UTC] PHP Parse error:  syntax error, unexpected 'linenums' (T_STRING) in /home/soqtt3cpu44z/portafolioJairo/views/proyecto.html on line 81
+[26-Jan-2020 03:39:03 UTC] PHP Fatal error:  Uncaught Pecee\SimpleRouter\Exceptions\NotFoundHttpException: Route not found: "/views/js/jquery.timepicker.min.js/" in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php:430
+Stack trace:
+#0 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php(331): Pecee\SimpleRouter\Router->routeRequest()
+#1 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/SimpleRouter.php(63): Pecee\SimpleRouter\Router->start()
+#2 /home/soqtt3cpu44z/portafolioJairo/index.php(31): Pecee\SimpleRouter\SimpleRouter::start()
+#3 {main}
+  thrown in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php on line 430
+[26-Jan-2020 03:39:03 UTC] PHP Fatal error:  Uncaught Pecee\SimpleRouter\Exceptions\NotFoundHttpException: Route not found: "/views/css/aos.css.map/" in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php:430
+Stack trace:
+#0 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php(331): Pecee\SimpleRouter\Router->routeRequest()
+#1 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/SimpleRouter.php(63): Pecee\SimpleRouter\Router->start()
+#2 /home/soqtt3cpu44z/portafolioJairo/index.php(31): Pecee\SimpleRouter\SimpleRouter::start()
+#3 {main}
+  thrown in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php on line 430
+[26-Jan-2020 03:39:04 UTC] PHP Fatal error:  Uncaught Pecee\SimpleRouter\Exceptions\NotFoundHttpException: Route not found: "/views/js/jquery.timepicker.min.js/" in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php:430
+Stack trace:
+#0 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php(331): Pecee\SimpleRouter\Router->routeRequest()
+#1 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/SimpleRouter.php(63): Pecee\SimpleRouter\Router->start()
+#2 /home/soqtt3cpu44z/portafolioJairo/index.php(31): Pecee\SimpleRouter\SimpleRouter::start()
+#3 {main}
+  thrown in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php on line 430
+[26-Jan-2020 03:39:04 UTC] PHP Fatal error:  Uncaught Pecee\SimpleRouter\Exceptions\NotFoundHttpException: Route not found: "/views/js/popper.min.js.map/" in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php:430
+Stack trace:
+#0 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php(331): Pecee\SimpleRouter\Router->routeRequest()
+#1 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/SimpleRouter.php(63): Pecee\SimpleRouter\Router->start()
+#2 /home/soqtt3cpu44z/portafolioJairo/index.php(31): Pecee\SimpleRouter\SimpleRouter::start()
+#3 {main}
+  thrown in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php on line 430
+[26-Jan-2020 03:39:04 UTC] PHP Fatal error:  Uncaught Pecee\SimpleRouter\Exceptions\NotFoundHttpException: Route not found: "/views/js/bootstrap.min.js.map/" in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php:430
+Stack trace:
+#0 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php(331): Pecee\SimpleRouter\Router->routeRequest()
+#1 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/SimpleRouter.php(63): Pecee\SimpleRouter\Router->start()
+#2 /home/soqtt3cpu44z/portafolioJairo/index.php(31): Pecee\SimpleRouter\SimpleRouter::start()
+#3 {main}
+  thrown in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php on line 430
+[26-Jan-2020 03:39:04 UTC] PHP Fatal error:  Uncaught Pecee\SimpleRouter\Exceptions\NotFoundHttpException: Route not found: "/views/js/aos.js.map/" in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php:430
+Stack trace:
+#0 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php(331): Pecee\SimpleRouter\Router->routeRequest()
+#1 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/SimpleRouter.php(63): Pecee\SimpleRouter\Router->start()
+#2 /home/soqtt3cpu44z/portafolioJairo/index.php(31): Pecee\SimpleRouter\SimpleRouter::start()
+#3 {main}
+  thrown in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php on line 430
+[26-Jan-2020 03:39:04 UTC] PHP Deprecated:  Non-static method pagesModel::fetchByID() should not be called statically in /home/soqtt3cpu44z/portafolioJairo/index.php on line 20
+[26-Jan-2020 03:39:05 UTC] PHP Fatal error:  Uncaught Pecee\SimpleRouter\Exceptions\NotFoundHttpException: Route not found: "/favicon.ico/" in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php:430
+Stack trace:
+#0 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php(331): Pecee\SimpleRouter\Router->routeRequest()
+#1 /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/SimpleRouter.php(63): Pecee\SimpleRouter\Router->start()
+#2 /home/soqtt3cpu44z/portafolioJairo/index.php(31): Pecee\SimpleRouter\SimpleRouter::start()
+#3 {main}
+  thrown in /home/soqtt3cpu44z/portafolioJairo/vendor/pecee/simple-router/src/Pecee/SimpleRouter/Router.php on line 430
