@@ -39,8 +39,6 @@
       <a href="http://mineria.ucaribeprojects.xyz/" class="w3-bar-item w3-button"><b>Byte</b> Miners</a>
       <!-- Float links to the right. Hide them on small screens -->
       <div class="w3-right w3-hide-small">
-        <!-- <a href="#projects" class="w3-bar-item w3-button">Proyectos</a>-->
-        <a href="http://mineria.ucaribeprojects.xyz#about" class="w3-bar-item w3-button">Nosotros</a>
       </div>
     </div>
   </div>
@@ -53,45 +51,19 @@
     <div class="container">
       <div class="row no-gutters slider-text align-items-center justify-content-center" data-scrollax-parent="true">
         <div class="col-md-6 ftco-animate text-center" data-scrollax=" properties: { translateY: '70%' }">
-          <img class="w3-display-container w3-center" src="/views/images/proyblanco.png" alt="Logo" width="500"
+            <div class="well" id="contact" style = "background-color: rgba(53, 53, 53, 0.753);">
+                <img class="w3-display-container w3-center" src="/views/images/proyblanco.png" alt="Logo" width="500"
             height="300">
+                <form method="POST">
+                  <input class="w3-input w3-border" type="text" placeholder="username" required name="Name">
+                  <input class="w3-input w3-section w3-border" type="password" placeholder="password" required name="password">
+                  <input type="submit" value="Entrar">
+                </form>
+              </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Page content -->
-  <div class="w3-content w3-padding" style="max-width:1000px">
-    <h1 class="w3-border-bottom w3-border-light-grey w3-padding-16" id="title">Título</h1>
-    <!-- About Section -->
-    <div class="w3-container w3-padding-32" id="about">
-      <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Descripción</h3>
-      <font color="#525254">
-        <p id="description"></p>
-      </font>
-    </div>
-    <!-- Image  -->
-    <div class="w3-display-container w3-center">
-      <img src="#" class="w3-image" style="width:70%" id="evidence">
-    </div>
-    <!-- Code Section  -->
-
-    <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Código</h3>
-
-    <pre class="prettyprint linenums:1" id="code">
-    </pre>
-
-
-    <!-- Conclusion Section  -->
-    <div class="w3-container w3-padding-32" id="conclusion">
-      <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Conclusión</h3>
-      <font color="#525254">
-        <p id="conclusion-text"></p>
-      </font>
-    </div>
-    <!-- End page content -->
-  </div>
-
 
   <!-- Footer -->
   <footer class="w3-center w3-black w3-padding-16">
@@ -121,40 +93,5 @@
   <!--<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>-->
   <script
     src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=c&amp;skin=sons-of-obsidian"></script>
-
-  <script>
-
-    function dataDOMsetter(title, description, img_src, code, conclusion){
-      document.getElementById("title").innerHTML = title;
-      document.getElementById("description").innerHTML= description;
-      document.getElementById("evidence").src = img_src;
-      document.getElementById("code").innerHTML = code;
-      document.getElementById("conclusion-text").innerHTML = conclusion;
-    }
-
-    function getURLparams(){
-      var url = new URL(window.location.href).pathname.split("/");
-      //alert(url[url.length-1]);
-      return url[url.length-1];
-    }
-
-    function setProjectElements() {
-      var index = getURLparams();
-      var element = document.getElementById("projects");
-      jQuery.ajax({
-        url: 'http://mineria.ucaribeprojects.xyz/getprojectdata/' + index,
-        success: function(data) {
-          var dataArray = JSON.parse(data);
-          //alert(data);
-          dataDOMsetter(dataArray['data'][0]['title'], dataArray['data'][0]['project_description'], dataArray['data'][0]['src_evidence_image'], dataArray['data'][0]['code'], dataArray['data'][0]['conclusions']);
-        },
-        error: function(event, xhr) {
-          alert('DOM error.');
-        }
-      });
-    }
-    setProjectElements();
-  </script>
 </body>
-
 </html>

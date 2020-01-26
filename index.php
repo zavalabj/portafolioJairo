@@ -7,6 +7,19 @@ require "./models/pagesModel.php";
 use Pecee\SimpleRouter\SimpleRouter;
 
 
+SimpleRouter::group(['prefix' => '/admin'], function () {
+    SimpleRouter::get('/login', function ()    {
+        include('./views/admin/login.html');
+    });
+    SimpleRouter::post('/login', function(){
+        
+        echo "kk";
+    });
+    SimpleRouter::get('/system', function(){
+        echo "kk.system";
+    });
+});
+
 SimpleRouter::get('/', function () {
     include('./views/principal.html');
 });
