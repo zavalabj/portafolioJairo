@@ -28,9 +28,9 @@ class PagesController{
         }
     }
 
-    function fetchAll(){
+    function getDataCards(){
         try{
-            $sql = "SELECT * FROM projects;";
+            $sql = "SELECT id_project, title, src_evidence_image FROM projects;";
             
             $preparedStatement = $this->con->prepare($sql);
             $result = $preparedStatement->execute();

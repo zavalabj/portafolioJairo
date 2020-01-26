@@ -16,9 +16,13 @@ SimpleRouter::get('/getcards', function(){
     echo $response;
 });
 
-SimpleRouter::get('/proyecto/{id}', function($id){
+SimpleRouter::get('/getprojectdata/{id}', function($id){
     $response = pagesModel::fetchByID($id);
     echo $response;
+})->where(['id','[0-9]+']);
+
+SimpleRouter::get('/proyecto/{id}', function($id){
+    include('./views/proyecto.php');
 })->where(['id','[0-9]+']);
 
 SimpleRouter::setDefaultNamespace('\Demo\Controllers');

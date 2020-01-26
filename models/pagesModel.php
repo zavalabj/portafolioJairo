@@ -21,7 +21,7 @@ class pagesModel{
         $con = $serverResponse['connection'];
         $controller = new PagesController($con);
 
-        $controllerResponse = $controller->fetchAll();
+        $controllerResponse = $controller->getDataCards();
         return $controllerResponse;
     }
 }
