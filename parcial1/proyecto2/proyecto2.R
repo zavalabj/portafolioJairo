@@ -53,7 +53,8 @@ setwd("C:/Users/regina/Desktop/6to Semestre/Minería de datos/portafolioJairo/pa
 df <- read.csv("buildbps.csv", sep = ",")
 datos <- df %>% select(BPS_School_Name, BPS_Year_Founded, BPS_Year_Built, MSBA_Year_Reno, BPS_Address, SMMA_latitude, SMMA_longitude, SMMA_Typology, BPS_Property_Status, BPS_Total_GSF, SMMA_Site_SF, DOE_Total, GSF...Student.Value, BPS_KWH, BPS_Electric_Bill, BPS_Therms, BPS_Gas_Bill, BPS_Water_Bill, BPS_Total_Energy_Cost, Climate_Priority, SMMA_FA_Status, SMMA_FA_School_Enrollment, SMMA_FA_Enrollment_Building, SMMA_FA_Major_Investments, 
                      SMMA_FA_Life_Safety, SMMA_FA_Building_suitability_school, SMMA_FA_susceptible_climate_change_now, SMMA_FA_susceptible_climate_change_2100, SMMA_FA_Electrical_Service, SMMA_FA_Security_Entry, SMMA_FA_Deterioration_Walls_Columns, SMMA_FA_Deterioration_Facade, SMMA_FA_Overall_Building_Condition, SMMA_FA_Emergency_Shelter, SMMA_FA_Community_Use_spaces, SMMA_FA_Neighborhood_Streets, SMMA_FA_Parking_Quality, SMMA_FA_DropOff_PickUp, 
-                     SMMA_FA_Walkways_Curbs_Sidewalks, SMMA_FA_MAABADA_Accessibility, SMMA_FA_Play_Areas, SMMA_FA_Walkable)
+                     SMMA_FA_Walkways_Curbs_Sidewalks, SMMA_FA_MAABADA_Accessibility, SMMA_FA_Play_Areas, SMMA_FA_Walkable, SMMA_EA_Building_Ventilation, SMMA_EA_Building_Natural_Daylighting, SMMA_EA_Building_Acoustical, SMMA_EA_Building_Air_Quality, 
+                     SMMA_EA_Building_Technology._Power, SMMA_EA_Building_Technology_Wireless, SMMA_EA_Building_Technology_Interactive)
 
 # Distribución de estudiantes según el nivel de estudios
 high <- filter(datos, SMMA_Typology == "High School")
@@ -70,3 +71,17 @@ cantidad_estudiantes <- c(sum(high$DOE_Total), sum(middle$DOE_Total), sum(specia
 matriculados <- data.frame(Grade_Typology=c("High School", "Middle School", "Special", "K-8", "Elementary School", "Early Learning"), Amount=cantidad_estudiantes)
 ggplot(matriculados, aes(x=Grade_Typology, y=Amount)) + geom_bar(stat = "identity") + coord_flip() + labs(title="Student Distribution by Grade Typology")+
 geom_text(aes(y=Amount, label=cantidad_estudiantes), vjust=1.5, color="white", size=3.5, hjust="right")
+
+
+# Seguridad que ofrecen las escuelas
+
+# Añadir a la lista de niveles la categoría "Not Present"
+levels(datos$SMMA_FA_Life_Safety) <- c(levels(datos$SMMA_FA_Life_Safety), "Not Present")
+# Cambiar valor de campos vacíos a "Not Present"
+datos$SMMA_FA_Life_Safety[datos$SMMA_FA_Life_Safety == ''] <- "Not Present"
+# Eliminar "" de la lista de niveles
+datos$SMMA_FA_Life_Safety <- factor(datos$SMMA_FA_Life_Safety)
+
+plot(datos$SMMA_FA_Life_Safety, main = "Nivel de seguridad ofrecido por las escuelas de Boston", ylab = "# Escuelas")
+
+
