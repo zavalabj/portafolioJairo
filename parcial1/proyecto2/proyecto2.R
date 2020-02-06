@@ -87,9 +87,9 @@ plot(datos$SMMA_FA_Life_Safety, main = "Nivel de seguridad ofrecido por las escu
 
 # Cantidad de escuelas que ofrecen refugio ante catastrofes
 
-# Añadir a la lista de niveles la categoría "Not Present"
+# Añadir a la lista de niveles la categoría "Unknown"
 levels(datos$SMMA_FA_Emergency_Shelter) <- c(levels(datos$SMMA_FA_Emergency_Shelter), "Unknown")
-# Cambiar valor de campos vacíos a "Not Present"
+# Cambiar valor de campos vacíos a "Unknown"
 datos$SMMA_FA_Emergency_Shelter[datos$SMMA_FA_Emergency_Shelter == ''] <- "Unknown"
 # Eliminar "" de la lista de niveles
 datos$SMMA_FA_Emergency_Shelter <- factor(datos$SMMA_FA_Emergency_Shelter)
@@ -105,3 +105,21 @@ desconocido <- filter(datos, SMMA_FA_Emergency_Shelter == "Unknown")
 prom_si <- count(si)/ count(datos)
 prom_no <- count(no)/ count(datos)
 prom_des <- count(desconocido)/ count(datos)
+
+# Comparativas tecnológicas
+# ¿Hay suficientes enchufes eléctricos para soportar una futura clase rica en tecnología? 
+# ¿Están distribuidos adecuadamente en todo el espacio?
+plot(datos$SMMA_EA_Building_Technology._Power, main = "Calidad de instalación eléctrica en las escuelas de Boston ", ylab = "# Escuelas")
+
+# ¿Hay suficientes puntos de acceso en toda la escuela para soportar un entorno tecnológico 1: 1? 
+# ¿El edificio cuenta con cableado de fibra óptica? ¿La sala de distribución principal (es decir, la sala de servidores) 
+# tiene aire acondicionado para ayudar a garantizar la confiabilidad del sistema?
+plot(datos$SMMA_EA_Building_Technology_Wireless, main = "Calidad de instalación inalámbrica", ylab = "# Escuelas")
+
+# ¿Las aulas y otros espacios de enseñanza tienen tecnología interactiva que funcione, como pizarras interactivas y cámaras de documentos?
+plot(datos$SMMA_EA_Building_Technology_Interactive, main = "Calidad de las TIC para la educación", ylab = "# Escuelas")
+
+
+# Escuelas con mejores tecnologías
+
+
