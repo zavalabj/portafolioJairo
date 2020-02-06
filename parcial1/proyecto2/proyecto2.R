@@ -36,16 +36,6 @@ summary(df$BPS_Year_Founded)
 plot(df$BPS_Year_Founded, xaxs="i",  yaxs="i", main ="Número de escuelas fundadas con respecto al año", xlab = "Año de Fundación", ylab= " # Escuelas", col="blue")
 
 
-# --------------------------------------------------------------------------------------------------
-
-# Variables con valores monetarios que podríamos analizar:
-# BPS_Electric_ Bill, BPS_ Therms, BPS_Gas_Bill, BPS_Water_ft_cubic (se pueden incluir más)
-
-# Variables categóricas que podríamos analizar:
-# SMMA_FA_Life_Safety, SMMA_FA_Security_Entry, SMMA_FA_Deterioration_Roof, SMMA_Fa_Deterioration_Floor,
-# SMMA_FA_Overall_Building_Condition, SMMA_FA_Emergency_Shelter, SMMA_FA_Overall_Community_Building, SMMA_FA_susceptible_climate_change_now,
-# SMMA_FA_susceptible_climate_change_2100, SMMA_FA_site_includes_Playgrounds
-
 #--------------------------------------------------------------------------------------------------
 
 # Cargar base de datos del Facilities and Educational Data for Boston Public Schools.
@@ -122,4 +112,6 @@ plot(datos$SMMA_EA_Building_Technology_Interactive, main = "Calidad de las TIC p
 
 # Escuelas con mejores tecnologías
 
-
+excellent <- filter(datos, SMMA_EA_Building_Technology_Interactive == "Excellent")
+excellent$BPS_Electric_Bill = as.numeric(gsub("[\\$,]", "", excellent$BPS_Electric_Bill))
+hist(excellent$BPS_Electric_Bill, col="blue", xlab="Costo de consumo eléctrico", ylab="# Escuelas", main ="Costo de consumo eléctrico de las escuelas con mejores TIC para la educación")
