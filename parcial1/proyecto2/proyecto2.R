@@ -17,13 +17,26 @@ vars_to_remove = filter(df_status(df), p_zeros > 30)  %>% .$variable
 df2 <- df %>% select(-vars_to_exclude, -vars_to_remove)
 
 #---------------------------------------------------------------------------------------------
+# Trabajando con el csv limpio
+
+# Cargar base de datos del Facilities and Educational Data for Boston Public Schools.
+setwd("C:/Users/regina/Desktop/6to Semestre/Minería de datos/portafolioJairo/parcial1/proyecto2")
+df <- read.csv("Buildbps limpio.csv", sep = ",")
+
 #Exploramos la distribucion de los datos de las variables
+
 summary(df$BPS_Year_Founded) #etiqueta
 plot(df$BPS_Year_Founded, xaxs="i",  yaxs="i", main ="Número de escuelas fundadas con respecto al año", xlab = "Año de Fundación", ylab= " # Escuelas", col="blue")
 #boxplot(df$quality,  main = "Boxplot de calidad")
 
-plot(df$BPS_Open, main ="Hora de entrada", xlab = "Hora", ylab= "# Escuelas", col="blue")
+summary(df$BPS_Electric_Bill)
+bloxplot(df$BPS_Electric_Bill)
 
+# replace $ with blank "" in the df$BPS_Electric_Bill column.  and coerce that result to numeric
+df$BPS_Electric_Bill = as.numeric(gsub("[\\$,]", "", df$BPS_Electric_Bill))
+
+
+# --------------------------------------------------------------------------------------------------
 
 
 # Variables con valores monetarios que podríamos analizar:
