@@ -85,3 +85,23 @@ datos$SMMA_FA_Life_Safety <- factor(datos$SMMA_FA_Life_Safety)
 plot(datos$SMMA_FA_Life_Safety, main = "Nivel de seguridad ofrecido por las escuelas de Boston", ylab = "# Escuelas")
 
 
+# Cantidad de escuelas que ofrecen refugio ante catastrofes
+
+# Añadir a la lista de niveles la categoría "Not Present"
+levels(datos$SMMA_FA_Emergency_Shelter) <- c(levels(datos$SMMA_FA_Emergency_Shelter), "Unknown")
+# Cambiar valor de campos vacíos a "Not Present"
+datos$SMMA_FA_Emergency_Shelter[datos$SMMA_FA_Emergency_Shelter == ''] <- "Unknown"
+# Eliminar "" de la lista de niveles
+datos$SMMA_FA_Emergency_Shelter <- factor(datos$SMMA_FA_Emergency_Shelter)
+
+plot(datos$SMMA_FA_Emergency_Shelter, main = "Cantidad de escuelas que ofrecen refugio", ylab = "# Escuelas")
+
+
+# Valores para cálculo de porcentajes
+si <- filter(datos, SMMA_FA_Emergency_Shelter == "Yes")
+no <- filter(datos, SMMA_FA_Emergency_Shelter == "No")
+desconocido <- filter(datos, SMMA_FA_Emergency_Shelter == "Unknown")
+
+prom_si <- count(si)/ count(datos)
+prom_no <- count(no)/ count(datos)
+prom_des <- count(desconocido)/ count(datos)
