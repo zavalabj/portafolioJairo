@@ -12,7 +12,6 @@ SimpleRouter::group(['prefix' => '/admin'], function () {
         include('./views/admin/login.html');
     });
     SimpleRouter::post('/login', function(){
-        
         echo "kk";
     });
     SimpleRouter::get('/system', function(){
