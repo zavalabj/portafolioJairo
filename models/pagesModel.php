@@ -20,8 +20,8 @@ class pagesModel{
 	    $serverResponse = $dbc->doConnection();
         $con = $serverResponse['connection'];
         $controller = new PagesController($con);
-
-        $controllerResponse = $controller->getDataCards();
-        return $controllerResponse;
+        return $serverResponse;
+        //$controllerResponse = $controller->getDataCards();
+        //return $controllerResponse;
     }
 }
