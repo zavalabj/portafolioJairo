@@ -20,7 +20,7 @@ class pagesModel{
 	    $serverResponse = $dbc->doConnection();
         $con = $serverResponse['connection'];
         $controller = new PagesController($con);
-        return $serverResponse['server_message'];
+        return $serverResponse['message'];
         //$controllerResponse = $controller->getDataCards();
         //return $controllerResponse;
     }
