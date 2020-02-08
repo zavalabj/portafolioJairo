@@ -29,6 +29,9 @@
   <link rel="stylesheet" href="/views/css/flaticon.css">
   <link rel="stylesheet" href="/views/css/icomoon.css">
   <link rel="stylesheet" href="/views/css/style.css">
+  <style>
+    .pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
+  </style>
 </head>
 
 <body>
@@ -74,11 +77,12 @@
     <div class="w3-display-container w3-center">
       <img src="#" class="w3-image" style="width:70%" id="evidence">
     </div>
-    <!-- Code Section  -->
-
-    <div class="w3-container w3-padding-32" id="code">
+    <!-- resultados Section  -->
+    <div class="w3-container w3-padding-32">
       <h3 class="w3-border-bottom w3-border-light-grey w3-padding-16">Resultados</h3>
+      <div id="resultados"></div>
     </div>
+    
     <!--
     <pre class="prettyprint linenums:1" id="code">
     </pre>
@@ -100,6 +104,7 @@
     <p>© 2020 Desarrollado por ByteMiners</p>
   </footer>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js"></script>
   <script src="/views/js/jquery.min.js"></script>
   <script src="/views/js/jquery-migrate-3.0.1.min.js"></script>
   <script src="/views/js/popper.min.js"></script>
@@ -126,14 +131,16 @@
 
   <script>
 
-    function dataDOMsetter(title, description, img_src, code, conclusion){
+    function dataDOMsetter(title, description, img_src, resultados_src, conclusion){
       document.getElementById("title").innerHTML = title;
       document.getElementById("description").innerHTML= description;
       document.getElementById("evidence").src = img_src;
-      document.getElementById("code").innerHTML = code;
+      //document.getElementById("resultados").innerHTML = code;
+      PDFObject.embed(resultados_src, "#resultados");
       document.getElementById("conclusion-text").innerHTML = conclusion;
     }
 
+    
     function getURLparams(){
       var url = new URL(window.location.href).pathname.split("/");
       //alert(url[url.length-1]);
