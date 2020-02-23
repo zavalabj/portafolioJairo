@@ -11,3 +11,9 @@ df <- read.csv("Ejercicio 1.csv", sep = ",")
 df
 df_transposed <- as.data.frame(t(as.matrix(df)))
 df_transposed
+
+any(is.na(df_transposed))
+
+df_transposed_omited<-na.omit(df_transposed)
+
+df_transposed_omited
