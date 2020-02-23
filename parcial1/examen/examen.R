@@ -17,3 +17,11 @@ any(is.na(df_transposed))
 df_transposed_omited<-na.omit(df_transposed)
 
 df_transposed_omited
+
+library(janitor)
+
+table(df_transposed_omited$V1)
+
+prop.table(table(df_transposed_omited$V1))
+
+tabyl(df$V1, sort = TRUE)
