@@ -12,9 +12,17 @@ knitr::opts_chunk$set(echo = TRUE)
 # Análisis exploratorio de datos
 
 # 1. Exploración y visualización de variables:
-
+```{r, include=TRUE}
+df <- read.csv("Ejercicio 1.csv", sep = ",")
+df_transposed <- as.data.frame(t(as.matrix(df)))
+df_transposed_omited<-na.omit(df_transposed)
+```
 # 2. Metodo de reducción de dimensión (PCA)
 ## 2.1 PCA base de datos PCA1
 ## 2.2 PCA base de datos PCA2
+```{r, include=TRUE}
+url<-"http://web.stanford.edu/~hastie/ElemStatLearn//datasets/zip.digits/train.2"
+data<-read.csv(url)
+```
 
 # 4. Metodo de reducción de dimensión (CCA)
