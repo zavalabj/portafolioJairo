@@ -9,5 +9,5 @@ setwd("/home/jose/Escritorio/Semestre 6/Mineria de datos/portafolioJairo/parcial
 df <- read.csv("Ejercicio 1.csv", sep = ",")
 
 df
-iris_transpose <- as.data.frame(t(as.matrix(df)))
-iris_transpose
+df_transposed <- as.data.frame(t(as.matrix(df)))
+df_transposed
