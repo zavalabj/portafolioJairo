@@ -1,5 +1,13 @@
 # 1. Exploraci´on y visualizaci´on de variables:
 #i. Exploren la base de datos, realice los cambios necesarios y convenientes para poder trabajar con ella.
 
-setwd("C:/Users/regina/Desktop/6to Semestre/Minería de datos/portafolioJairo/parcial1/examen")
+#setwd("C:/Users/regina/Desktop/6to Semestre/Minería de datos/portafolioJairo/parcial1/examen")
+#df <- read.csv("Ejercicio 1.csv", sep = ",")
+
+
+setwd("/home/jose/Escritorio/Semestre 6/Mineria de datos/portafolioJairo/parcial1/examen")
 df <- read.csv("Ejercicio 1.csv", sep = ",")
+
+df
+iris_transpose <- as.data.frame(t(as.matrix(df)))
+iris_transpose
