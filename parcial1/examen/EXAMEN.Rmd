@@ -118,7 +118,7 @@ frecuency_as_df<-as.data.frame(tabyl(updated_data$Salario_mes, sort = TRUE))
 names(frecuency_as_df) <- c("Salario x mes","Frecuencia","Porcentaje")
 final_salary_per_month_frecuency<-frecuency_as_df[-c(24),]
 
-final_salary_per_month_frecuency
+final_salary_per_month_frecuency kk
 ```
 
 ##1.3 Hagan un gráfico donde pueda explicar las variables dependientes.
