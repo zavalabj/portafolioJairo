@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ---
 title: "Examen Parcial 1"
 author: "ByteMiners"
@@ -18,6 +17,14 @@ library(grid)
 library(FactoMineR)
 library(factoextra)
 library(corrplot)
+library(ggpubr)
+library(scatterplot3d)
+library(reshape2)
+library(knitr)
+library(MVN)
+library(biotools)
+library(klaR)
+library(janitor)
 ```
 # 1. Exploración y visualización de variables
 ## 1.1 Explorar la base de datos, realizar los cambios necesarios y convenientes para poder trabajar con ella.
@@ -31,7 +38,7 @@ df_transposed <- as.data.frame(t(as.matrix(df)))
 df_transposed_omitted<-na.omit(df_transposed)
 
 # Colocar nombre a las columnas y eliminar la primera fila 
-names(df_transposed_omitted) <- c("Peso","Estatura","Edad","Complexión","Papas_separados","Cantidad_hermanos",
+names(df_transposed_omitted) <- c("Peso","Estatura","Edad","Complexion","Papas_separados","Cantidad_hermanos",
                                   "Trabaja", "Horas_trab_dia", "Horas_trab_mes", "Salario_mes")
 
 updated_data <- df_transposed_omitted[-c(1),] 
@@ -64,7 +71,7 @@ final_age_frecuency
 
 
 #Tabla de frecuencias de complexion
-frecuency_as_df<-as.data.frame(tabyl(updated_data$Complexión, sort = TRUE))
+frecuency_as_df<-as.data.frame(tabyl(updated_data$Complexion, sort = TRUE))
 
 names(frecuency_as_df) <- c("Complexion","Frecuencia","Porcentaje")
 final_constitution_frecuency<-frecuency_as_df[-c(1),]
@@ -73,7 +80,7 @@ final_constitution_frecuency
 
 
 #Tabla de frecuencias de papás_separados
-frecuency_as_df<-as.data.frame(tabyl(updated_data$Papás_separados, sort = TRUE))
+frecuency_as_df<-as.data.frame(tabyl(updated_data$Papas_separados, sort = TRUE))
 
 names(frecuency_as_df) <- c("Papás_separados","Frecuencia","Porcentaje")
 final_separated_parents_frecuency<-frecuency_as_df[-c(2),]
@@ -121,20 +128,19 @@ final_salary_per_month_frecuency<-frecuency_as_df[-c(24),]
 final_salary_per_month_frecuency
 ```
 
-##1.3 Hagan un gráfico donde pueda explicar las variables dependientes.
+## 1.3 Hagan un gráfico donde pueda explicar las variables dependientes.
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 ```
 
 ## 1.4 Construyan diferentes gráficos donde puedan mostrar patrones y detalles de la base de datos con respecto a una nueva variable que podemos denominar: “categoría”
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
-
 # Número de personas por categoría
 cantidad_personas <- c(sum(with(updated_data, as.numeric(Edad) < 18.0)), 
                        sum(with(updated_data, as.numeric(Edad)>=18.0 & as.numeric(Edad)<=25.0)),
                        sum(with(updated_data, as.numeric(Edad) > 25.0)))
 
 dist_personas <- data.frame(Categoria=c("Junior", "Señor", "Mayor"), Cantidad=cantidad_personas)
-ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity") + coord_flip() + labs(title="Distribución de personas por categoría")+
+ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity",fill=rainbow(3)) + coord_flip() + labs(title="Distribución de personas por categoría") +
   geom_text(aes(y=Cantidad, label=cantidad_personas), vjust=1.5, color="white", size=3.5, hjust="right")
 
 # Salario mensual promedio de una persona dependiendo su categoría
@@ -152,7 +158,7 @@ Salario <- c(format(round(prom_jun, 2), nsmall = 2),
 
 salario_trab <- data.frame(Categoria=c("Junior", "Señor", "Mayor"), Salario_Promedio = Salario)
 
-ggplot(horas_trab, aes(x=Categoria, y=Salario)) + geom_bar(stat = "identity") + coord_flip() + labs(title="Salario mensual promedio dependiendo la categoría")+
+ggplot(salario_trab, aes(x=Categoria, y=Salario)) + geom_bar(stat = "identity",fill=rainbow(3)) + coord_flip() + labs(title="Salario mensual promedio dependiendo la categoría")+
   geom_text(aes(y=Salario, label=Salario), vjust=1.5, color="white", size=3.5, hjust="right")
 
 # Número de personas con padres separados por categoría
@@ -161,11 +167,11 @@ cantidad_personas <- c(sum(with(junior, Papas_separados == "SI")),
                        sum(with(mayor, Papas_separados == "SI")))
 
 dist_personas <- data.frame(Categoria=c("Junior", "Señor", "Mayor"), Cantidad=cantidad_personas)
-ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity") + coord_flip() + labs(title="Número de personas con padres separados por categoría")+
+ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity",fill=rainbow(3)) + coord_flip() + labs(title="Número de personas con padres separados por categoría")+
   geom_text(aes(y=Cantidad, label=cantidad_personas), vjust=1.5, color="white", size=3.5, hjust="right")
 
 ```
-# 2. Metodo de reducción de dimensión (PCA)
+# 2. Metodo de reducción de dimensión (LDA)
 
 
 ## 2.1 PCA base de datos PCA1
@@ -224,4 +230,63 @@ ggplot(data = data.frame(prop_varianza_acum, pc = 1:256),
   theme_bw() +
   labs(x = "Componente principal",
        y = "Prop. varianza explicada acumulada")
+```
+
+# 3. Metodo de reducción de dimensión (PCA)
+```{r, echo=TRUE,tidy=TRUE}
+datos<-read.csv("Ejercicio 3.csv", sep = ",")
+p1 <- ggplot(data = datos, aes(x = largo, fill = tipo)) +
+  geom_histogram(position = "identity", alpha = 0.5)
+p2 <- ggplot(data = datos, aes(x = ancho, fill = tipo)) +
+  geom_histogram(position = "identity", alpha = 0.5)
+p3 <- ggplot(data = datos, aes(x = alto, fill = tipo)) +
+  geom_histogram(position = "identity", alpha = 0.5)
+ggarrange(p1, p2, p3, nrow = 3, common.legend = TRUE)
+
+pairs(x = datos[, c("largo","ancho","alto")],
+      col = c("blue", "green","red")[datos$tipo], pch = 19,main="Grafica Correlacion 3D")
+
+scatterplot3d(datos$largo, datos$ancho, datos$alto,
+              color = c("firebrick", "green","blue")[datos$tipo], pch = 19,
+              grid = TRUE, xlab = "largo", ylab = "ancho",
+              zlab = "alto", angle = 65, cex.axis = 0.6,main = "Visualizacion 3D")
+legend("topleft",
+       bty = "n", cex = 0.8,
+       title = "tipo",
+       c("rectangular", "cuadrada", "circular"), fill = c("firebrick", "green","blue"))
+
+datos_tidy <- melt(datos, value.name = "valor")
+kable(datos_tidy %>% group_by(tipo, variable) %>% summarise(p_value_Shapiro.test = shapiro.test(valor)$p.value))
+outliers <- mvn(data = datos[,-1], mvnTest = "hz", multivariateOutlierMethod = "quan")
+royston_test <- mvn(data = datos[,-1], mvnTest = "royston", multivariatePlot = "qq")
+royston_test$multivariateNormality
+hz_test <- mvn(data = datos[,-1], mvnTest = "hz")
+hz_test$multivariateNormality
+boxM(data = datos[,2:4], grouping = datos[,1])
+modelo_lda <- lda(formula = tipo ~ largo + ancho + alto,
+                  data = datos)
+
+nuevas_observaciones <- data.frame(largo = 30, ancho = 15,
+                                   alto = 20)
+predict(object = modelo_lda, newdata = nuevas_observaciones)
+predicciones <- predict(object = modelo_lda, newdata = datos[, -1],
+                        method = "predictive")
+table(datos$tipo, predicciones$class,
+      dnn = c("Clase real", "Clase predicha"))
+trainig_error <- mean(datos$especie != predicciones$class) * 100
+paste("trainig_error=", trainig_error, "%")
+with(datos, {
+  s3d <- scatterplot3d(largo, ancho, alto,
+                       color = c("firebrick", "green","blue")[datos$tipo],
+                       pch = 19, grid = TRUE, xlab = "largo", ylab = "ancho",
+                       zlab = "altura", angle = 65, cex.axis = 0.6,main = "Clasificacion de los Nuevos Datos")
+  
+  s3d.coords <- s3d$xyz.convert(largo, ancho, alto)
+  # convierte coordenadas 3D en proyecciones 2D
+  
+  legend("topleft", 
+         bty = "n", cex = 0.8,
+         title = "Tipo",
+         c("largo", "ancho","alto"), fill = c("firebrick", "green","blue"))
+})
 ```
