@@ -31,7 +31,12 @@ library(GGally)
 ```
 # 1. Exploración y visualización de variables
 ## 1.1 Explorar la base de datos, realizar los cambios necesarios y convenientes para poder trabajar con ella.
-```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+
+Lo primero que realizamos fue la trasposicón de las columnas del dataframe para que cada observación fuera vista en una fila y no por columnas como inicialmente estaba acomodada la información.
+
+Después optamos por eliminar aquellas observaciones que tuvieran valores nulos (NA).
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE} 
 df <- read.csv("Ejercicio 1.csv", sep = ",")
 
 #Trasponer las columnas del df para que las características de cada observacion estén ordenadas por columnas 
@@ -47,6 +52,7 @@ names(df_transposed_omitted) <- c("Peso","Estatura","Edad","Complexion","Papas_s
 updated_data <- df_transposed_omitted[-c(1),] 
 ```
 ## 1.2  Expliquen por medio de tablas esta información. En la tabla debe aparecer simultáneamente la frecuencia y el porcentaje
+
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 #Tabla de frecuencias de peso
 frecuency_as_df<-as.data.frame(tabyl(updated_data$Peso, sort = TRUE))
@@ -132,6 +138,11 @@ final_salary_per_month_frecuency
 ```
 
 ## 1.3 Hagan un gráfico donde pueda explicar las variables dependientes.
+
+Seleccionamos como variable dependiente a la de salario mensual y como variables predictoras a las horas trabajadas al mes y las horas trabajadas por día. Aplicando el método de pearson obtuvimos el siguiente modelo: $9.1650+0.1895x+0.4341y$
+
+Además, observando la correlación de las variables se puede notar que ésta es débil.
+
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 datachida<-data.frame(cbind(updated_data$Horas_trab_dia,updated_data$Horas_trab_mes,updated_data$Salario_mes))
 colnames(datachida) =c("Horas_trab_dia","Horas_trab_mes","Salario_mes")
@@ -151,6 +162,11 @@ grid.arrange(plot1, plot2)
 ```
 
 ## 1.4 Construyan diferentes gráficos donde puedan mostrar patrones y detalles de la base de datos con respecto a una nueva variable que podemos denominar: “categoría”
+
+Para este punto utilizamos la función de filter para obtener los registros que cumplieran con cada una de las categorías planteadas y seguidamente realizamos 3 gráficas: la primera para visualizar la cantidad de personas que existen por cada categoria, la segunda para apreciar el salario mensual promedio dependiendo de la categoria (junior, señor, mayor) y la tercera para ver la relación de personas con padres separados.
+
+Con estas gráficas podemos concluir que existe un número más alto de personas mayores a 25 años y que la categoría con mejor salario mensual aproximadamente es la de "Señor", además de que el 29% de las personas pertenecientes a la categoría "Mayor" tiene padres separados.
+
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 # Número de personas por categoría
 cantidad_personas <- c(sum(with(updated_data, as.numeric(Edad) < 18.0)), 
@@ -193,6 +209,7 @@ ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity"
 
 
 ## 2.1 PCA base de datos PCA1
+
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 df2<-read.csv("Ejercicio 2.1.csv", sep = ",")
 res.pca <- PCA(df2[,-1], graph = F)
@@ -221,7 +238,9 @@ fviz_pca_ind(res.pca,
              addEllipses = TRUE, # Concentration ellipses
              legend.title = "Groups")
 ```
+
 ## 2.2 PCA base de datos PCA2
+
 ```{r, echo=TRUE,tidy=TRUE}
 url<-"http://web.stanford.edu/~hastie/ElemStatLearn//datasets/zip.digits/train.2"
 data<-read.csv(url)
