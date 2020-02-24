@@ -270,6 +270,9 @@ ggplot(data = data.frame(prop_varianza_acum, pc = 1:256),
 ```
 
 # 3. Metodo de reducción de dimensión (PCA)
+
+## 3.1 Exploren los datos y encuentren gráficamente sus tendencias y sus posibles correlaciones en gráficos 2D y 3D.
+
 ```{r, echo=TRUE,tidy=TRUE}
 datos<-read.csv("Ejercicio 3.csv", sep = ",")
 p1 <- ggplot(data = datos, aes(x = largo, fill = tipo)) +
@@ -279,9 +282,8 @@ p2 <- ggplot(data = datos, aes(x = ancho, fill = tipo)) +
 p3 <- ggplot(data = datos, aes(x = alto, fill = tipo)) +
   geom_histogram(position = "identity", alpha = 0.5)
 ggarrange(p1, p2, p3, nrow = 3, common.legend = TRUE)
-
 pairs(x = datos[, c("largo","ancho","alto")],
-      col = c("blue", "green","red")[datos$tipo], pch = 19,main="Grafica Correlacion 3D")
+      col = c("blue", "green","red")[datos$tipo], pch = 19,main="Grafica Correlacion 2D")
 
 scatterplot3d(datos$largo, datos$ancho, datos$alto,
               color = c("firebrick", "green","blue")[datos$tipo], pch = 19,
@@ -291,7 +293,9 @@ legend("topleft",
        bty = "n", cex = 0.8,
        title = "tipo",
        c("rectangular", "cuadrada", "circular"), fill = c("firebrick", "green","blue"))
-
+```
+## 3.2 Realicen la verificación de supuestos.
+```{r, echo=TRUE,tidy=TRUE}
 datos_tidy <- melt(datos, value.name = "valor")
 kable(datos_tidy %>% group_by(tipo, variable) %>% summarise(p_value_Shapiro.test = shapiro.test(valor)$p.value))
 outliers <- mvn(data = datos[,-1], mvnTest = "hz", multivariateOutlierMethod = "quan")
@@ -300,9 +304,14 @@ royston_test$multivariateNormality
 hz_test <- mvn(data = datos[,-1], mvnTest = "hz")
 hz_test$multivariateNormality
 boxM(data = datos[,2:4], grouping = datos[,1])
+```
+## 3.3 Apliquen el método LDA o QDA según consideren conveniente paso a paso.
+```{r, echo=TRUE,tidy=TRUE}
 modelo_lda <- lda(formula = tipo ~ largo + ancho + alto,
                   data = datos)
-
+```
+## 3.4 Grafiquen como quedaría la clasificación y calculen su error para nuevos datos.
+```{r, echo=TRUE,tidy=TRUE}
 nuevas_observaciones <- data.frame(largo = 30, ancho = 15,
                                    alto = 20)
 predict(object = modelo_lda, newdata = nuevas_observaciones)
