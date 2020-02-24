@@ -25,6 +25,9 @@ library(MVN)
 library(biotools)
 library(klaR)
 library(janitor)
+library(psych)
+library(gridExtra)
+library(GGally)
 ```
 # 1. Exploración y visualización de variables
 ## 1.1 Explorar la base de datos, realizar los cambios necesarios y convenientes para poder trabajar con ella.
@@ -130,6 +133,21 @@ final_salary_per_month_frecuency
 
 ## 1.3 Hagan un gráfico donde pueda explicar las variables dependientes.
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+datachida<-data.frame(cbind(updated_data$Horas_trab_dia,updated_data$Horas_trab_mes,updated_data$Salario_mes))
+colnames(datachida) =c("Horas_trab_dia","Horas_trab_mes","Salario_mes")
+round(cor(x = datachida, method = "pearson"), 3)
+multi.hist(x = datachida, dcol = c("blue", "red"), dlty = c("dotted", "solid"))
+ggpairs(datachida, lower = list(continuous = "smooth"),
+        diag = list(continuous = "bar"), axisLabels = "none")
+modelo <- lm(Salario_mes ~ Horas_trab_dia + Horas_trab_mes, data = datachida )
+summary(modelo)
+plot1 <- ggplot(data = datachida, aes(Horas_trab_mes, modelo$residuals)) +
+    geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+    theme_bw()
+plot2 <- ggplot(data = datachida, aes(Horas_trab_dia, modelo$residuals)) +
+    geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
+    theme_bw()
+grid.arrange(plot1, plot2)
 ```
 
 ## 1.4 Construyan diferentes gráficos donde puedan mostrar patrones y detalles de la base de datos con respecto a una nueva variable que podemos denominar: “categoría”
