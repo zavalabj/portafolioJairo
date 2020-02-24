@@ -70,7 +70,8 @@ Salario <- c(format(round(prom_jun, 2), nsmall = 2),
 
 salario_trab <- data.frame(Categoria=c("Junior", "Señor", "Mayor"), Salario_Promedio = Salario)
 
-ggplot(horas_trab, aes(x=Categoria, y=Salario)) + geom_bar(stat = "identity") + coord_flip() + labs(title="Salario mensual promedio dependiendo la categoría")+
+ggplot(horas_trab, aes(x=Categoria, y=Salario)) + geom_bar(stat = "identity") + coord_flip() + 
+  labs(title="Salario mensual promedio dependiendo la categoría")+
   geom_text(aes(y=Salario, label=Salario), vjust=1.5, color="white", size=3.5, hjust="right")
 
 # Número de personas con padres separados por categoría
