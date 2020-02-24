@@ -14,6 +14,9 @@ library(ggplot2)
 library(cowplot)
 library(dplyr)
 library(grid)
+library(FactoMineR)
+library(factoextra)
+library(corrplot)
 ```
 # 1. Exploración y visualización de variables
 ## 1.1 Explorar la base de datos, realizar los cambios necesarios y convenientes para poder trabajar con ella.
@@ -34,6 +37,34 @@ updated_data <- df_transposed_omitted[-c(1),]
 ```
 # 2. Metodo de reducción de dimensión (PCA)
 ## 2.1 PCA base de datos PCA1
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+df2<-read.csv("Ejercicio 2.1.csv", sep = ",")
+res.pca <- PCA(df2[,-1], graph = F)
+
+eig.val <- get_eigenvalue(res.pca)
+eig.val
+fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 90))
+
+var <- get_pca_var(res.pca)
+
+corrplot(var$cos2, is.corr=FALSE)
+
+fviz_pca_var(res.pca, col.var = "cos2",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+             repel = TRUE # Avoid text overlapping
+)
+
+fviz_pca_var(res.pca, col.var = "contrib",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07")
+)
+
+fviz_pca_ind(res.pca,
+             geom.ind = "point", # show points only (nbut not "text")
+             col.ind =df2$tipo, # color by groups
+             palette = c("#00AFBB", "#E7B800", "#FC4E07"),
+             addEllipses = TRUE, # Concentration ellipses
+             legend.title = "Groups")
+```
 ## 2.2 PCA base de datos PCA2
 ```{r, echo=TRUE,tidy=TRUE}
 url<-"http://web.stanford.edu/~hastie/ElemStatLearn//datasets/zip.digits/train.2"
