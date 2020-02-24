@@ -37,6 +37,87 @@ updated_data <- df_transposed_omitted[-c(1),]
 ```
 ## 1.2  Expliquen por medio de tablas esta información. En la tabla debe aparecer simultáneamente la frecuencia y el porcentaje
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+#Tabla de frecuencias de peso
+frecuency_as_df<-as.data.frame(tabyl(updated_data$Peso, sort = TRUE))
+
+names(frecuency_as_df) <- c("Peso","Frecuencia","Porcentaje")
+final_weight_frecuency<-frecuency_as_df[-c(51),]
+
+final_weight_frecuency
+
+#Tabla de frecuencias de estatura
+frecuency_as_df<-as.data.frame(tabyl(updated_data$Estatura, sort = TRUE))
+
+names(frecuency_as_df) <- c("Estatura","Frecuencia","Porcentaje")
+final_height_frecuency<-frecuency_as_df[-c(51),]
+
+final_height_frecuency
+
+#Tabla de frecuencias de edad
+frecuency_as_df<-as.data.frame(tabyl(updated_data$Edad, sort = TRUE))
+
+names(frecuency_as_df) <- c("Edad","Frecuencia","Porcentaje")
+final_age_frecuency<-frecuency_as_df[-c(51),]
+
+final_age_frecuency
+
+
+#Tabla de frecuencias de complexion
+frecuency_as_df<-as.data.frame(tabyl(updated_data$Complexión, sort = TRUE))
+
+names(frecuency_as_df) <- c("Complexion","Frecuencia","Porcentaje")
+final_constitution_frecuency<-frecuency_as_df[-c(1),]
+
+final_constitution_frecuency
+
+
+#Tabla de frecuencias de papás_separados
+frecuency_as_df<-as.data.frame(tabyl(updated_data$Papás_separados, sort = TRUE))
+
+names(frecuency_as_df) <- c("Papás_separados","Frecuencia","Porcentaje")
+final_separated_parents_frecuency<-frecuency_as_df[-c(2),]
+
+final_separated_parents_frecuency
+
+#Tabla de frecuencias de cantidad_hermanos
+frecuency_as_df<-as.data.frame(tabyl(updated_data$Cantidad_hermanos, sort = TRUE))
+
+names(frecuency_as_df) <- c("Cantidad_hermanos","Frecuencia","Porcentaje")
+final_number_of_brothers_frecuency<-frecuency_as_df[-c(7),]
+
+final_number_of_brothers_frecuency
+
+#Tabla de frecuencias de los que trabajan
+frecuency_as_df<-as.data.frame(tabyl(updated_data$Trabaja, sort = TRUE))
+
+names(frecuency_as_df) <- c("Trabaja","Frecuencia","Porcentaje")
+final_iswork_frecuency<-frecuency_as_df[-c(3),]
+
+final_iswork_frecuency
+
+#Tabla de frecuencias de horas trabajadas x dia
+frecuency_as_df<-as.data.frame(tabyl(updated_data$Horas_trab_dia, sort = TRUE))
+
+names(frecuency_as_df) <- c("Horas_trabajo x dia","Frecuencia","Porcentaje")
+final_worktime_per_day_frecuency<-frecuency_as_df[-c(8),]
+
+final_worktime_per_day_frecuency
+
+#Tabla de frecuencias de horas trabajadas por mes
+frecuency_as_df<-as.data.frame(tabyl(updated_data$Horas_trab_mes, sort = TRUE))
+
+names(frecuency_as_df) <- c("Horas_trabajo x mes","Frecuencia","Porcentaje")
+final_worktime_per_month_frecuency<-frecuency_as_df[-c(10),]
+
+final_worktime_per_month_frecuency
+
+#Tabla de frecuencias de salarios mensuales
+frecuency_as_df<-as.data.frame(tabyl(updated_data$Salario_mes, sort = TRUE))
+
+names(frecuency_as_df) <- c("Salario x mes","Frecuencia","Porcentaje")
+final_salary_per_month_frecuency<-frecuency_as_df[-c(24),]
+
+final_salary_per_month_frecuency
 ```
 
 ##1.3 Hagan un gráfico donde pueda explicar las variables dependientes.
