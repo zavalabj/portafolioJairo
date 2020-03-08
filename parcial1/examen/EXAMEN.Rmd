@@ -1,7 +1,7 @@
 ---
-title: "Examen Parcial 1"
+title: "Corrección Examen Parcial 1"
 author: "ByteMiners"
-date: "23/02/2020"
+date: "09/03/2020"
 output:
   pdf_document: default
 ---
@@ -29,137 +29,155 @@ library(janitor)
 library(psych)
 library(gridExtra)
 library(GGally)
+library(funModeling)
 ```
 # 1. Exploración y visualización de variables
+
 ## 1.1 Explorar la base de datos, realizar los cambios necesarios y convenientes para poder trabajar con ella.
-
-Lo primero que realizamos fue la trasposicón de las columnas del dataframe para que cada observación fuera vista en una fila y no por columnas como inicialmente estaba acomodada la información.
-
-Después optamos por eliminar aquellas observaciones que tuvieran valores nulos (NA).
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE} 
 df <- read.csv("Ejercicio 1.csv", sep = ",")
+df
+```
+
+Como podemos observar esta base de datos cuenta con 10 variables o características, las cuales son: Peso, Estatura, Edad, Complexión, Papas separados, Cantidad hermanos, Trabaja, Horas trabajadas por día, Horas trabajadas por mes y salario mensual.
+
+Además, es posible notar que se conforma de 50 observaciones, sin embargo es necesario reordenar los datos, ya que cada observación debe estar contenida en una fila y no en una columna (como se nos fue otorgada la información inicialmente).
+
+Lo primero que realizamos fue la trasposición de las columnas del dataframe para que cada observación fuera vista en una fila y no por columnas como inicialmente estaba acomodada la información.Después es necesario colocar ceros en los campos en donde hay NA para poder realizar un análisis más acertado de los datos.
+
+Otra cosa que debemos arreglar son las observaciones en donde el valor de la característica "Trabaja" es "NO", debido a que contienen variables relacionadas con la anteriormente mencionada (las cuales son: "Horas_trab_dia", "Horas_trab_mes" y "Salario_mes") y que se encuentran vacías. Esto último igual puede afectar nuestro análisis, es por eso que decidimos colocar ceros en aquellos campos en donde existen NA.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE} 
 
 #Trasponer las columnas del df para que las características de cada observacion estén ordenadas por columnas 
 df_transposed <- as.data.frame(t(as.matrix(df)))
 
-# Eliminar observaciones con valores NA
-df_transposed_omitted<-na.omit(df_transposed)
-
 # Colocar nombre a las columnas y eliminar la primera fila 
-names(df_transposed_omitted) <- c("Peso","Estatura","Edad","Complexion","Papas_separados","Cantidad_hermanos",
+names(df_transposed) <- c("Peso","Estatura","Edad","Complexion","Papas_separados","Cantidad_hermanos",
                                   "Trabaja", "Horas_trab_dia", "Horas_trab_mes", "Salario_mes")
 
-updated_data <- df_transposed_omitted[-c(1),] 
+datos <- df_transposed[-c(1),] 
+
+# Reemplazar valores NA con 0 solo en las columnas seleccionadas
+vars_to_replace=c("Horas_trab_dia", "Horas_trab_mes", "Salario_mes")
+
+datos = datos %>% mutate_at(.vars=vars_to_replace, .funs = funs(ifelse(is.na(.), 0, .)))
+
+datos
 ```
-## 1.2  Expliquen por medio de tablas esta información. En la tabla debe aparecer simultáneamente la frecuencia y el porcentaje
+
+Para continuar con el análisis exploratorio, es momento de distinguir el tipo de dato correspondiente para cada variable que conforma esta base de datos. Esto con el fin de poder determinar cómo explorar la base de datos y si es necesario modificar algún tipo de datos para realizar tablas o gráficas relevantes.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE} 
+# Analizar la base de datos
+df_status(datos)
+```
+
+Existen 7 variables de tipo "factor" el cual es usado para variables categóricas o nominales, lo curioso es que de esas 7 variables, solo 3 (Complexión, Papas separados y Trabaja) son categóricas y las restantes (Peso, Estatura, Edad y Cantidad hermanos) deberían ser numéricas.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE} 
+# Convertir en valores númericos aquellos almacenados en las columnas seleccionadas
+vars_to_replace=c("Peso", "Estatura", "Edad", "Cantidad_hermanos")
+
+datos[vars_to_replace] <- lapply(datos[vars_to_replace], function(x) as.numeric(as.character(x)))
+
+df_status(datos)
+```
+
+Otra corrección que se debe realizar es hacer función piso a los valores de Edad, ya que estos fueron ingresados como decimales y eso es erróneo, deben ser considerados como discretos.
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
-#Tabla de frecuencias de peso
-frecuency_as_df<-as.data.frame(tabyl(updated_data$Peso, sort = TRUE))
+datos['Edad'] <- floor(datos['Edad'])
 
-names(frecuency_as_df) <- c("Peso","Frecuencia","Porcentaje")
-final_weight_frecuency<-frecuency_as_df[-c(51),]
+```
 
-final_weight_frecuency
+## 1.2  Expliquen por medio de tablas esta información. En la tabla debe aparecer simultáneamente la frecuencia y el porcentaje
 
-#Tabla de frecuencias de estatura
-frecuency_as_df<-as.data.frame(tabyl(updated_data$Estatura, sort = TRUE))
+Es importante recalcar que continuamos realizando análisis exploratorio de la base de datos y respetando las instrucciones de cada subinciso, es por esto que ahora elaboraremos tablas que contengan información sobre la frecuencia y porcentaje de aquellas variables que lo requieren, como lo son: Complexión, Papás separados, Cantidad hermanos y Trabaja. 
 
-names(frecuency_as_df) <- c("Estatura","Frecuencia","Porcentaje")
-final_height_frecuency<-frecuency_as_df[-c(51),]
-
-final_height_frecuency
-
-#Tabla de frecuencias de edad
-frecuency_as_df<-as.data.frame(tabyl(updated_data$Edad, sort = TRUE))
-
-names(frecuency_as_df) <- c("Edad","Frecuencia","Porcentaje")
-final_age_frecuency<-frecuency_as_df[-c(51),]
-
-final_age_frecuency
-
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 
 #Tabla de frecuencias de complexion
-frecuency_as_df<-as.data.frame(tabyl(updated_data$Complexion, sort = TRUE))
+frecuency_as_df<-as.data.frame(tabyl(datos$Complexion, sort = TRUE))
 
 names(frecuency_as_df) <- c("Complexion","Frecuencia","Porcentaje")
 final_constitution_frecuency<-frecuency_as_df[-c(1),]
 
 final_constitution_frecuency
+```
 
+A partir de esta tabla podemos inferir que el 56% de las personas que se encuentran registradas en la base de datos tienen un cuerpo mesomorfo, es decir, su complexión es intermedia (ni muy delgada ni muy gruesa) y se caracterizan por tener un metabolismo regular.
 
+Por otro lado se observa que el 36% de las observaciones tienen un cuerpo endomorfo, lo que significa que desgraciadamente sufren de sufre peso.
+
+Y aquellos con complexión ectomorfa (muy delgada) solo cubren el 8% de nuestras observaciones.
+
+En conclusión se puede decir que más de la mitad de las personas se encuentran saludables y con una buena complexión, sin embargo el 44% restante debería acudir con un médico y estar al pendiente de su salud.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 #Tabla de frecuencias de papás_separados
-frecuency_as_df<-as.data.frame(tabyl(updated_data$Papas_separados, sort = TRUE))
+frecuency_as_df<-as.data.frame(tabyl(datos$Papas_separados, sort = TRUE))
 
 names(frecuency_as_df) <- c("Papás_separados","Frecuencia","Porcentaje")
 final_separated_parents_frecuency<-frecuency_as_df[-c(2),]
 
 final_separated_parents_frecuency
+```
 
+Sabemos que solo el 20% de los individuos registrados en la base de datos tiene padres separados, esto puede ser por diversas razones, las cuales desconocemos. Esta información puede ser útil para evaluar si el desempeño de una persona o nivel de carga de trabajo se ve influenciado por la relación de sus progenitores.
+
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 #Tabla de frecuencias de cantidad_hermanos
-frecuency_as_df<-as.data.frame(tabyl(updated_data$Cantidad_hermanos, sort = TRUE))
+frecuency_as_df<-as.data.frame(tabyl(datos$Cantidad_hermanos, sort = TRUE))
 
 names(frecuency_as_df) <- c("Cantidad_hermanos","Frecuencia","Porcentaje")
 final_number_of_brothers_frecuency<-frecuency_as_df[-c(7),]
 
 final_number_of_brothers_frecuency
+```
 
+Con esta tabla se puede inferir que en esta base de datos predominan las observaciones con menos de 3 hermanos, mientras que aquellas observaciones con más de 3 hermanos son menos frecuentes.
+El número de hermanos es un dato relevante para estudiar si el nivel socioeconómico de una persona se ve afectado por la cantidad de hijos que deciden criar sus padres.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 #Tabla de frecuencias de los que trabajan
-frecuency_as_df<-as.data.frame(tabyl(updated_data$Trabaja, sort = TRUE))
+frecuency_as_df<-as.data.frame(tabyl(datos$Trabaja, sort = TRUE))
 
 names(frecuency_as_df) <- c("Trabaja","Frecuencia","Porcentaje")
 final_iswork_frecuency<-frecuency_as_df[-c(3),]
 
 final_iswork_frecuency
+```
+
+De igual forma es importante destacar que el 72% de las personas registradas en la base de datos sí trabaja, mientras que el 28% restante no lo hace, esto puede ser debido a que esos individuos son menores de edad o por factores que no son posibles determinar con la información otorgada por la base de datos.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+#Filtro de las observaciones que SI trabajan
+
+trabajan <- filter(datos, Trabaja == "SI")
 
 #Tabla de frecuencias de horas trabajadas x dia
-frecuency_as_df<-as.data.frame(tabyl(updated_data$Horas_trab_dia, sort = TRUE))
+
+frecuency_as_df<-as.data.frame(tabyl(trabajan$Horas_trab_dia, sort = TRUE))
 
 names(frecuency_as_df) <- c("Horas_trabajo x dia","Frecuencia","Porcentaje")
 final_worktime_per_day_frecuency<-frecuency_as_df[-c(8),]
 
 final_worktime_per_day_frecuency
 
-#Tabla de frecuencias de horas trabajadas por mes
-frecuency_as_df<-as.data.frame(tabyl(updated_data$Horas_trab_mes, sort = TRUE))
-
-names(frecuency_as_df) <- c("Horas_trabajo x mes","Frecuencia","Porcentaje")
-final_worktime_per_month_frecuency<-frecuency_as_df[-c(10),]
-
-final_worktime_per_month_frecuency
-
-#Tabla de frecuencias de salarios mensuales
-frecuency_as_df<-as.data.frame(tabyl(updated_data$Salario_mes, sort = TRUE))
-
-names(frecuency_as_df) <- c("Salario x mes","Frecuencia","Porcentaje")
-final_salary_per_month_frecuency<-frecuency_as_df[-c(24),]
-
-final_salary_per_month_frecuency
 ```
+
+Con esta tabla podemos observar que las personas registradas en la base de datos que sí trabajan, lo hacen en promedio entre 1 a 7 horas al día y que el 25% de ellas prefiere laborar medio día (4 horas).
+
 
 ## 1.3 Hagan un gráfico donde pueda explicar las variables dependientes.
 
-Seleccionamos como variable dependiente a la de salario mensual y como variables predictoras a las horas trabajadas al mes y las horas trabajadas por día. Aplicando el método de pearson obtuvimos el siguiente modelo: $9.1650+0.1895x+0.4341y$
 
-Además, observando la correlación de las variables se puede notar que ésta es débil.
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
-datachida<-data.frame(cbind(updated_data$Horas_trab_dia,updated_data$Horas_trab_mes,updated_data$Salario_mes))
-colnames(datachida) =c("Horas_trab_dia","Horas_trab_mes","Salario_mes")
-round(cor(x = datachida, method = "pearson"), 3)
-multi.hist(x = datachida, dcol = c("blue", "red"), dlty = c("dotted", "solid"))
-ggpairs(datachida, lower = list(continuous = "smooth"),
-        diag = list(continuous = "bar"), axisLabels = "none")
-modelo <- lm(Salario_mes ~ Horas_trab_dia + Horas_trab_mes, data = datachida )
-summary(modelo)
-plot1 <- ggplot(data = datachida, aes(Horas_trab_mes, modelo$residuals)) +
-    geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
-    theme_bw()
-plot2 <- ggplot(data = datachida, aes(Horas_trab_dia, modelo$residuals)) +
-    geom_point() + geom_smooth(color = "firebrick") + geom_hline(yintercept = 0) +
-    theme_bw()
-grid.arrange(plot1, plot2)
+
 ```
 
 ## 1.4 Construyan diferentes gráficos donde puedan mostrar patrones y detalles de la base de datos con respecto a una nueva variable que podemos denominar: “categoría”
@@ -177,7 +195,9 @@ cantidad_personas <- c(sum(with(updated_data, as.numeric(Edad) < 18.0)),
 dist_personas <- data.frame(Categoria=c("Junior", "Señor", "Mayor"), Cantidad=cantidad_personas)
 ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity",fill=rainbow(3)) + coord_flip() + labs(title="Distribución de personas por categoría") +
   geom_text(aes(y=Cantidad, label=cantidad_personas), vjust=1.5, color="white", size=3.5, hjust="right")
+```
 
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 # Salario mensual promedio de una persona dependiendo su categoría
 junior <- filter(updated_data, as.numeric(Edad) <18.0)
 senior <- filter(updated_data, as.numeric(Edad)>=18.0 & as.numeric(Edad)<=25.0)
@@ -195,7 +215,10 @@ salario_trab <- data.frame(Categoria=c("Junior", "Señor", "Mayor"), Salario_Pro
 
 ggplot(salario_trab, aes(x=Categoria, y=Salario)) + geom_bar(stat = "identity",fill=rainbow(3)) + coord_flip() + labs(title="Salario mensual promedio dependiendo la categoría")+
   geom_text(aes(y=Salario, label=Salario), vjust=1.5, color="white", size=3.5, hjust="right")
+```
 
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 # Número de personas con padres separados por categoría
 cantidad_personas <- c(sum(with(junior, Papas_separados == "SI")), 
                        sum(with(senior, Papas_separados == "SI")),
@@ -275,6 +298,7 @@ ggplot(data = data.frame(prop_varianza_acum, pc = 1:256),
        y = "Prop. varianza explicada acumulada")
 ```
 Una vez viendo la representación grafica podemos concluir que un numero óptimo de dimenciones para esta base de datos sería aproximadamente 10.
+
 # 3. Metodo de reducción de dimensión (LDA)
 
 ## 3.1 Exploren los datos y encuentren gráficamente sus tendencias y sus posibles correlaciones en gráficos 2D y 3D.
