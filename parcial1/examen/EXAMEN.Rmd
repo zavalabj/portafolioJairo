@@ -94,7 +94,7 @@ datos['Edad'] <- floor(datos['Edad'])
 
 ## 1.2  Expliquen por medio de tablas esta información. En la tabla debe aparecer simultáneamente la frecuencia y el porcentaje
 
-Es importante recalcar que continuamos realizando análisis exploratorio de la base de datos y respetando las instrucciones de cada subinciso, es por esto que ahora elaboraremos tablas que contengan información sobre la frecuencia y porcentaje de aquellas variables que lo requieren, como lo son: Complexión, Papás separados, Cantidad hermanos y Trabaja. 
+Es importante recalcar que continuamos realizando análisis exploratorio de la base de datos y respetando las instrucciones de cada subinciso, es por esto que ahora elaboraremos tablas que contengan información sobre la frecuencia y porcentaje de aquellas variables que lo requieren, como lo son: Complexión, Papás separados, Cantidad hermanos, Trabaja y Horas diarias trabajadas. 
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 
@@ -172,49 +172,85 @@ final_worktime_per_day_frecuency
 Con esta tabla podemos observar que las personas registradas en la base de datos que sí trabajan, lo hacen en promedio entre 1 a 7 horas al día y que el 25% de ellas prefiere laborar medio día (4 horas).
 
 
-## 1.3 Hagan un gráfico donde pueda explicar las variables dependientes.
+Continuando con el análisis, es momento de enfocarnos en las otras variables de la base de datos (Peso, Estatura, Edad, Horas trabajadas al mes y Salario mensual), aquellas que no colocamos en tablas pues la frecuencia de sus datos es de 1 y sus tablas de frecuencia y porcentajes resultaban poco agradables visualmente.
 
-
+Lo que haremos con ellas es visualizar un resumen de las mismas.
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+summary(datos$Peso)
+sd(datos$Peso)
 
 ```
 
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+summary(datos$Estatura)
+sd(datos$Estatura)
+
+```
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+summary(datos$Edad)
+sd(datos$Edad)
+
+```
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+summary(trabajan$Horas_trab_mes)
+sd(trabajan$Horas_trab_mes)
+
+```
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+summary(trabajan$Salario_mes)
+sd(trabajan$Salario_mes)
+
+```
+
+## 1.3 Hagan un gráfico donde pueda explicar las variables dependientes.
+
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE, message=FALSE}
+numericas <- datos %>% dplyr::select(Peso, Estatura, Edad,Horas_trab_dia, 
+                                     Horas_trab_mes, Salario_mes)
+ggpairs(numericas, title = "Variables númericas dependientes")
+```
+
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+plot(datos$Complexion)
+```
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+plot(datos$Trabaja)
+```
+
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+plot(datos$Papas_separados)
+```
+
+
+
 ## 1.4 Construyan diferentes gráficos donde puedan mostrar patrones y detalles de la base de datos con respecto a una nueva variable que podemos denominar: “categoría”
 
-Para este punto utilizamos la función de filter para obtener los registros que cumplieran con cada una de las categorías planteadas y seguidamente realizamos 3 gráficas: la primera para visualizar la cantidad de personas que existen por cada categoria, la segunda para apreciar el salario mensual promedio dependiendo de la categoria (junior, señor, mayor) y la tercera para ver la relación de personas con padres separados.
-
-Con estas gráficas podemos concluir que existe un número más alto de personas mayores a 25 años y que la categoría con mejor salario mensual aproximadamente es la de "Señor", además de que el 29% de las personas pertenecientes a la categoría "Mayor" tiene padres separados.
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 # Número de personas por categoría
-cantidad_personas <- c(sum(with(updated_data, as.numeric(Edad) < 18.0)), 
-                       sum(with(updated_data, as.numeric(Edad)>=18.0 & as.numeric(Edad)<=25.0)),
-                       sum(with(updated_data, as.numeric(Edad) > 25.0)))
+cantidad_personas <- c(sum(with(datos, Edad < 18.0)), 
+                       sum(with(datos, Edad >=18.0 & Edad<=25.0)),
+                       sum(with(datos, Edad > 25.0)))
 
 dist_personas <- data.frame(Categoria=c("Junior", "Señor", "Mayor"), Cantidad=cantidad_personas)
-ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity",fill=rainbow(3)) + coord_flip() + labs(title="Distribución de personas por categoría") +
+ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity") + coord_flip() + labs(title="Distribución de personas por categoría") +
   geom_text(aes(y=Cantidad, label=cantidad_personas), vjust=1.5, color="white", size=3.5, hjust="right")
 ```
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
-# Salario mensual promedio de una persona dependiendo su categoría
-junior <- filter(updated_data, as.numeric(Edad) <18.0)
-senior <- filter(updated_data, as.numeric(Edad)>=18.0 & as.numeric(Edad)<=25.0)
-mayor <- filter(updated_data, as.numeric(Edad) > 25.0)
+# Salario mensual de una persona dependiendo su categoría
+junior <- filter(datos, Edad <18.0)
+senior <- filter(datos, Edad>=18.0 & Edad <=25.0)
+mayor <- filter(datos, Edad > 25.0)
 
-prom_jun <- mean(as.numeric(as.numeric_version(junior$Salario_mes)))
-prom_sen <- mean(as.numeric(as.numeric_version(senior$Salario_mes)))
-prom_may <- mean(as.numeric(as.numeric_version(mayor$Salario_mes)))
 
-Salario <- c(format(round(prom_jun, 2), nsmall = 2), 
-                      format(round(prom_sen, 2), nsmall = 2),
-                      format(round(prom_may, 2), nsmall = 2))
-
-salario_trab <- data.frame(Categoria=c("Junior", "Señor", "Mayor"), Salario_Promedio = Salario)
-
-ggplot(salario_trab, aes(x=Categoria, y=Salario)) + geom_bar(stat = "identity",fill=rainbow(3)) + coord_flip() + labs(title="Salario mensual promedio dependiendo la categoría")+
-  geom_text(aes(y=Salario, label=Salario), vjust=1.5, color="white", size=3.5, hjust="right")
 ```
 
 
@@ -225,10 +261,17 @@ cantidad_personas <- c(sum(with(junior, Papas_separados == "SI")),
                        sum(with(mayor, Papas_separados == "SI")))
 
 dist_personas <- data.frame(Categoria=c("Junior", "Señor", "Mayor"), Cantidad=cantidad_personas)
-ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity",fill=rainbow(3)) + coord_flip() + labs(title="Número de personas con padres separados por categoría")+
+ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity") + coord_flip() + labs(title="Número de personas con padres separados por categoría")+
   geom_text(aes(y=Cantidad, label=cantidad_personas), vjust=1.5, color="white", size=3.5, hjust="right")
 
 ```
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+# Personas que trabajan dependiendo su categoría
+
+```
+
+
 # 2. Metodo de reducción de dimensión (PCA)
 
 ## 2.1 PCA base de datos PCA1
