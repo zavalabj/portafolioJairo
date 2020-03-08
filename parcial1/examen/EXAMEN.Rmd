@@ -215,22 +215,7 @@ numericas <- datos %>% dplyr::select(Peso, Estatura, Edad,Horas_trab_dia,
 ggpairs(numericas, title = "Variables númericas dependientes")
 ```
 
-
-```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
-plot(datos$Complexion)
-```
-```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
-plot(datos$Trabaja)
-```
-
-
-```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
-plot(datos$Papas_separados)
-```
-
-
-
-## 1.4 Construyan diferentes gráficos donde puedan mostrar patrones y detalles de la base de datos con respecto a una nueva variable que podemos denominar: “categoría”
+# 1.4 Construyan diferentes gráficos donde puedan mostrar patrones y detalles de la base de datos con respecto a una nueva variable que podemos denominar: “categoría”
 
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
@@ -254,35 +239,23 @@ trabajan$Categoria[trabajan$Edad > 25] = "Mayor"
 
 Observaciones <-c(1:36)
 
-ggplot(trabajan, aes(x= Observaciones, y=Salario_mes, col=Categoria)) +  geom_line()
+ggplot(trabajan, aes(x= Observaciones, y=Salario_mes, col=Categoria)) + 
+  labs(title="Salario mensual de una persona dependiendo su categoría") + geom_line()
 ```
 
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 # Número de personas con padres separados por categoría
-junior <- filter(datos, Edad <18)
-senior <- filter(datos, Edad>=18 & Edad <=25)
-mayor <- filter(datos, Edad > 25)
-
-cantidad_personas <- c(sum(with(junior, Papas_separados == "SI")), 
-                       sum(with(senior, Papas_separados == "SI")),
-                       sum(with(mayor, Papas_separados == "SI")))
-
-dist_personas <- data.frame(Categoria=c("Junior", "Señor", "Mayor"), Cantidad=cantidad_personas)
-ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity") + coord_flip() + labs(title="Número de personas con padres separados por categoría")+
-  geom_text(aes(y=Cantidad, label=cantidad_personas), vjust=1.5, color="white", size=3.5, hjust="right")
-
-```
-
-```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
-# Personas que trabajan dependiendo su categoría
 datos$Categoria[datos$Edad < 18] = "Junior"
 datos$Categoria[datos$Edad >= 18 & datos$Edad<=25] = "Senior"
 datos$Categoria[datos$Edad > 25] = "Mayor"
 
+ggplot(datos, aes(Categoria, ..count..)) + geom_bar(aes(fill = Papas_separados), position = "dodge")
+```
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+# Personas que trabajan dependiendo su categoría
 ggplot(datos, aes(Categoria, ..count..)) + geom_bar(aes(fill = Trabaja), position = "dodge")
-
-
 ```
 
 
@@ -304,7 +277,9 @@ var <- get_pca_var(res.pca)
 
 corrplot(var$cos2, is.corr=FALSE)
 ```
+
 Proseguimos a graficar las variables y de igual manera graficamos las observaciones.
+
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 fviz_pca_var(res.pca, col.var = "cos2",
              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
@@ -354,12 +329,15 @@ ggplot(data = data.frame(prop_varianza_acum, pc = 1:256),
   labs(x = "Componente principal",
        y = "Prop. varianza explicada acumulada")
 ```
+
 Una vez viendo la representación grafica podemos concluir que un numero óptimo de dimenciones para esta base de datos sería aproximadamente 10.
 
 # 3. Metodo de reducción de dimensión (LDA)
 
 ## 3.1 Exploren los datos y encuentren gráficamente sus tendencias y sus posibles correlaciones en gráficos 2D y 3D.
+
 Graficamos los datos y sus correlaciones mediante un modelo 2D y 3D.En la grafica 2D podemos apreciar que las variables tienen una distribución normal y la relación entre el largo y el ancho generan agrupaciones las cuales están bien definidos.
+
 ```{r, echo=TRUE,tidy=TRUE}
 datos<-read.csv("Ejercicio 3.csv", sep = ",")
 p1 <- ggplot(data = datos, aes(x = largo, fill = tipo)) +
@@ -381,8 +359,11 @@ legend("topleft",
        title = "tipo",
        c("rectangular", "cuadrada", "circular"), fill = c("firebrick", "green","blue"))
 ```
+
 ## 3.2 Realicen la verificación de supuestos.
+
 Aplicamos las técnicas vistas en clase para evaluar la normalidad multivariable y para identificar outlayers que influyen en el comportamiento los datos, mediante los test Mardia, Henze-Zirkler y Royston
+
 ```{r, echo=TRUE,tidy=TRUE}
 datos_tidy <- melt(datos, value.name = "valor")
 kable(datos_tidy %>% group_by(tipo, variable) %>% summarise(p_value_Shapiro.test =
@@ -394,14 +375,20 @@ hz_test <- mvn(data = datos[,-1], mvnTest = "hz")
 hz_test$multivariateNormality
 boxM(data = datos[,2:4], grouping = datos[,1])
 ```
+
 ## 3.3 Apliquen el método LDA o QDA según consideren conveniente paso a paso.
+
 Para esta base de datos decidimos aplicar el modelo LDA, ya que los datos como vimos anteriormente tienen una distribución normal.
+
 ```{r, echo=TRUE,tidy=TRUE}
 modelo_lda <- lda(formula = tipo ~ largo + ancho + alto,
                   data = datos)
 ```
+
 ## 3.4 Grafiquen como quedaría la clasificación y calculen su error para nuevos datos.
+
 Al aplicar el modelo de predicción para una nueva observación y al evaluarla nos dio un error del 0% lo cual indica que el modelo funciona correctamente.
+
 ```{r, echo=TRUE,tidy=TRUE}
 nuevas_observaciones <- data.frame(largo = 30, ancho = 15,
                                    alto = 20)
@@ -427,4 +414,5 @@ with(datos, {
          c("largo", "ancho","alto"), fill = c("firebrick", "green","blue"))
 })
 ```
+
 Empleando las mismas observaciones con las que se ha generado el modelo discriminante (trainig data), la precisión de clasificación es del 100%.
