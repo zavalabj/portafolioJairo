@@ -246,16 +246,24 @@ ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity"
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 # Salario mensual de una persona dependiendo su categoría
-junior <- filter(datos, Edad <18.0)
-senior <- filter(datos, Edad>=18.0 & Edad <=25.0)
-mayor <- filter(datos, Edad > 25.0)
+trabajan <- filter(datos, Trabaja == "SI")
 
+trabajan$Categoria[trabajan$Edad < 18] = "Junior"
+trabajan$Categoria[trabajan$Edad >= 18 & trabajan$Edad<=25] = "Senior"
+trabajan$Categoria[trabajan$Edad > 25] = "Mayor"
 
+Observaciones <-c(1:36)
+
+ggplot(trabajan, aes(x= Observaciones, y=Salario_mes, col=Categoria)) +  geom_line()
 ```
 
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 # Número de personas con padres separados por categoría
+junior <- filter(datos, Edad <18)
+senior <- filter(datos, Edad>=18 & Edad <=25)
+mayor <- filter(datos, Edad > 25)
+
 cantidad_personas <- c(sum(with(junior, Papas_separados == "SI")), 
                        sum(with(senior, Papas_separados == "SI")),
                        sum(with(mayor, Papas_separados == "SI")))
@@ -268,6 +276,12 @@ ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity"
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 # Personas que trabajan dependiendo su categoría
+datos$Categoria[datos$Edad < 18] = "Junior"
+datos$Categoria[datos$Edad >= 18 & datos$Edad<=25] = "Senior"
+datos$Categoria[datos$Edad > 25] = "Mayor"
+
+ggplot(datos, aes(Categoria, ..count..)) + geom_bar(aes(fill = Trabaja), position = "dodge")
+
 
 ```
 
