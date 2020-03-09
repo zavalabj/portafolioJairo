@@ -31,6 +31,8 @@ library(gridExtra)
 library(GGally)
 library(funModeling)
 library(CCA)
+library(vegan)
+library(fields)
 ```
 # 1. Exploración y visualización de variables
 
@@ -260,7 +262,7 @@ cantidad_personas <- c(sum(with(datos, Edad < 18.0)),
                        sum(with(datos, Edad > 25.0)))
 
 dist_personas <- data.frame(Categoria=c("Junior", "Señor", "Mayor"), Cantidad=cantidad_personas)
-ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity") + coord_flip() + labs(title="Distribución de personas por categoría") +
+ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity",fill=rainbow(3)) + coord_flip() + labs(title="Distribución de personas por categoría") +
   geom_text(aes(y=Cantidad, label=cantidad_personas), vjust=1.5, color="white", size=3.5, hjust="right")
 ```
 
@@ -581,18 +583,32 @@ Se puede apreciar que la correlación entre las variables numéricas de esta bas
 
 
 ## 4.2 Apliquen el método CCA paso a paso encontrando todas la matrices de correlación.
-
+Calculamos La matriz de covarianza:
 ```{r, echo=TRUE,tidy=TRUE}
-
 dataa<-c("peso","altura","edad","ansiedad")
 datos<-data[dataa]
 cov(datos)
+```
+Matriz de covarianzas de X
+```{r, echo=TRUE,tidy=TRUE}
 X <-datos[,(1:2)]
 cov(X)
+```
+Matriz de covarianzas de Y
+```{r, echo=TRUE,tidy=TRUE}
 Y <-datos[,(3:4)]
 cov(Y)
+```
+Matriz de covarianzas de X e Y
+```{r, echo=TRUE,tidy=TRUE}
 cov(X,Y)
+```
+Matriz de covarianzas de Y y X
+```{r, echo=TRUE,tidy=TRUE}
 cov(Y,X)
+```
+El siguiente paso es encontrar los autovalores y autovectores de las matrices cuadradas
+```{r, echo=TRUE,tidy=TRUE}
 A <-solve(cov(X,X))%*%cov(X,Y)%*%solve(cov(Y,Y))%*%cov(Y,X)
 B <-solve(cov(Y,Y))%*%cov(Y,X)%*%solve(cov(X,X))%*%cov(X,Y)
 eigen(A)$values 
@@ -610,17 +626,17 @@ mat_cor
 ```
 
 ## 4.3 Expliquen de forma gráfica como se relacionan estas variables
+Podemos apreciar que las variables tienen una alta correlación en la matriz, y de igual manera el diagrama de correlación cruzada es practicamente la misma que las otras 2 graficas.
+
 ```{r, echo=TRUE,tidy=TRUE}
 cca1<- cc(datos,datos)
-cca1
 img.matcor(mat_cor,type=2)
-plt.cc(cca1,var.label=T)
-cca2<- cca(datos,datos)
-cca2
-plot(cca2)
 ```
 
 ## 4.4 Construyan como quedaría una posible clasificación de estas observaciones según estas variables.
+Hacemos un diagrama de correspondencia lo cual permite agrupar las variables, y podemos apreciar que las variables ansiedad y edad se encuentran muy cercanas 
 ```{r, echo=TRUE,tidy=TRUE}
-
+plt.cc(cca1,var.label=T)
+cca2<- cca(datos,datos)
+plot(cca2)
 ```
