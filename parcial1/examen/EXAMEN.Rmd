@@ -30,6 +30,7 @@ library(psych)
 library(gridExtra)
 library(GGally)
 library(funModeling)
+library(CCA)
 ```
 # 1. Exploración y visualización de variables
 
@@ -462,6 +463,8 @@ legend("topleft",
        c("rectangular", "cuadrada", "circular"), fill = c("firebrick", "green","blue"))
 ```
 
+Gracias a la graficación realizada en 3D se puede apreciar que el grupo aislado es el de tipo circular y aquellos que casi se traslapan (desde el ángulo en el que están siendo vistos) son el tipo rectangular y cuadrada.
+
 ## 3.2 Realicen la verificación de supuestos.
 
 Aplicamos las técnicas vistas en clase para evaluar la normalidad multivariable y para identificar outlayers que influyen en el comportamiento los datos, mediante los test Mardia, Henze-Zirkler y Royston
@@ -523,16 +526,62 @@ Empleando las mismas observaciones con las que se ha generado el modelo discrimi
 
 ## 4.1 Exploren los datos y encuentren gráficamente sus tendencias y sus posibles correlaciones.
 
+```{r, echo=TRUE,tidy=TRUE, message=FALSE}
+data<-read.csv("Ejercicio 4.csv", sep = ",")
+df_status(data)
+
+```
+
+La base de datos a explorar se conforma de 6 variables, las cuales son: Peso, Altura, Edad, Salud, Ansiedad y Deporte. Además, contiene 100 observaciones.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+frecuency_as_df<-as.data.frame(tabyl(data$ansiedad, sort = TRUE))
+
+names(frecuency_as_df) <- c("Tipo","Frecuencia","Porcentaje")
+
+frecuency_as_df
+
+```
+
+Como se puede apreciar en la tabla, existen 4 niveles de ansiedad que se enumeran del 0 al 3, siendo 0 la ausencia de esta condición y 3 la presencia máxima de la misma. Tan solo el 26% de las personas registradas en la base de datos se encuentran libres de sufrir de ansidad, mientras que el 74% la presenta en distintos niveles. 
+
+En general, predominan las observaciones con ansiedad de tipo 3, ya que son el 32% de la información total almacenada en la base de datos.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+frecuency_as_df<-as.data.frame(tabyl(data$deporte, sort = TRUE))
+
+names(frecuency_as_df) <- c("Tipo","Frecuencia","Porcentaje")
+
+frecuency_as_df
+
+```
+
+La variable "Deporte" podría referirse al nivel de dificultad del deporte practicado por cierta persona o el nivel de hábito que tiene un individuo para ejercitarse. Con los datos de la tabla es posible inferir que predomina la categoria "Bajo" en la variable deporte con una presencia del 63% en los datos del conjunto con el que se está trabajando.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+frecuency_as_df<-as.data.frame(tabyl(data$salud, sort = TRUE))
+
+names(frecuency_as_df) <- c("Tipo","Frecuencia","Porcentaje")
+
+frecuency_as_df
+
+```
+En el caso de la variable salud, lamentablemente se puede observar que solo el 39% de las personas registradas en la base de datos cuentan con una buena salud, mientras que el 61% restante presentan una salud regular o mala. Estos resultados pueden ser reflejo a sus hábitos deportivos, nivel de ansidad, edad y peso.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE, message=FALSE}
+numericas <- data %>% dplyr::select(peso, altura, edad, ansiedad)
+ggpairs(numericas, title = "Variables numéricas dependientes")
+
+
+```
+
+Se puede apreciar que la correlación entre las variables numéricas de esta base de datos es demasiado débil. La más alta es de 0.364 y es la presente en la relación entre la ansiedad y la edad.
+
+
 ## 4.2 Apliquen el método CCA paso a paso encontrando todas la matrices de correlación.
 
-## 4.3 Expliquen de forma gráfica como se relacionan estas variables
-
-## 4.4 Construyan como quedaría una posible clasificación de estas observaciones según estas variables.
-
-
 ```{r, echo=TRUE,tidy=TRUE}
-data<-read.csv("Ejercicio 4.csv", sep = ",")
-ggpairs(data, title = "Deportistas")
+
 dataa<-c("peso","altura","edad","ansiedad")
 datos<-data[dataa]
 cov(datos)
@@ -555,6 +604,11 @@ b
 t(a)%*%cov(X,X)%*%a
 mat_cor  <-matcor(datos,datos)
 mat_cor
+
+```
+
+## 4.3 Expliquen de forma gráfica como se relacionan estas variables
+```{r, echo=TRUE,tidy=TRUE}
 cca1<- cc(datos,datos)
 cca1
 img.matcor(mat_cor,type=2)
@@ -562,4 +616,9 @@ plt.cc(cca1,var.label=T)
 cca2<- cca(datos,datos)
 cca2
 plot(cca2)
+```
+
+## 4.4 Construyan como quedaría una posible clasificación de estas observaciones según estas variables.
+```{r, echo=TRUE,tidy=TRUE}
+
 ```
