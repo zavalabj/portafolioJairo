@@ -36,7 +36,7 @@ library(funModeling)
 ## 1.1 Explorar la base de datos, realizar los cambios necesarios y convenientes para poder trabajar con ella.
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE} 
-df <- read.csv("Ejercicio 1.csv", sep = ",")
+df <- read.csv("Ejercicio 1.1.csv", sep = ",")
 df
 ```
 
@@ -44,9 +44,9 @@ Como podemos observar esta base de datos cuenta con 10 variables o característi
 
 Además, es posible notar que se conforma de 50 observaciones, sin embargo es necesario reordenar los datos, ya que cada observación debe estar contenida en una fila y no en una columna (como se nos fue otorgada la información inicialmente).
 
-Lo primero que realizamos fue la trasposición de las columnas del dataframe para que cada observación fuera vista en una fila y no por columnas como inicialmente estaba acomodada la información.Después es necesario colocar ceros en los campos en donde hay NA para poder realizar un análisis más acertado de los datos.
+Lo primero que realizamos fue la trasposición de las columnas del dataframe para que cada observación fuera vista en una fila y no por columnas como inicialmente estaba acomodada la información.
 
-Otra cosa que debemos arreglar son las observaciones en donde el valor de la característica "Trabaja" es "NO", debido a que contienen variables relacionadas con la anteriormente mencionada (las cuales son: "Horas_trab_dia", "Horas_trab_mes" y "Salario_mes") y que se encuentran vacías. Esto último igual puede afectar nuestro análisis, es por eso que decidimos colocar ceros en aquellos campos en donde existen NA.
+Otra cosa que debemos arreglar son las observaciones en donde el valor de la característica "Trabaja" es "NO", debido a que contienen variables relacionadas con la anteriormente mencionada (las cuales son: "Horas_trab_dia", "Horas_trab_mes" y "Salario_mes") y que se encuentran vacías. Esto último puede afectar nuestro análisis, es por eso que decidimos colocar ceros en aquellos campos en donde existen NA.
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE} 
 
@@ -67,7 +67,7 @@ datos = datos %>% mutate_at(.vars=vars_to_replace, .funs = funs(ifelse(is.na(.),
 datos
 ```
 
-Para continuar con el análisis exploratorio, es momento de distinguir el tipo de dato correspondiente para cada variable que conforma esta base de datos. Esto con el fin de poder determinar cómo explorar la base de datos y si es necesario modificar algún tipo de datos para realizar tablas o gráficas relevantes.
+Para continuar con el análisis exploratorio, es momento de distinguir el tipo de dato correspondiente para cada variable que conforma esta base de datos. Esto con el fin de poder determinar cómo explorar la base de datos y si es necesario modificar algún tipo de dato para realizar tablas o gráficas relevantes.
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE} 
 # Analizar la base de datos
@@ -76,16 +76,34 @@ df_status(datos)
 
 Existen 7 variables de tipo "factor" el cual es usado para variables categóricas o nominales, lo curioso es que de esas 7 variables, solo 3 (Complexión, Papas separados y Trabaja) son categóricas y las restantes (Peso, Estatura, Edad y Cantidad hermanos) deberían ser numéricas.
 
+Para trabajar con las variables Horas_trab_dia, Horas_trab_mes y Salario_mes también se debe realizar un ajuste a su tipo de dato, porque como se pudo observar, al momento de cambiar los NA por ceros los valores almacenados en esos cambios fueron alterados.
+
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE} 
 # Convertir en valores númericos aquellos almacenados en las columnas seleccionadas
 vars_to_replace=c("Peso", "Estatura", "Edad", "Cantidad_hermanos")
 
 datos[vars_to_replace] <- lapply(datos[vars_to_replace], function(x) as.numeric(as.character(x)))
 
-df_status(datos)
+# Cargamos csv con los valores previamente almacenados en los campos Horas_trab_dia, Horas_trab_mes y Salario_mes
+df2 <- read.csv("Ejercicio 1.csv", sep = ",")
+
+#Trasponer las columnas del df para que las características de cada observacion estén ordenadas por columnas 
+df2 <- as.data.frame(t(as.matrix(df2)))
+
+# Colocar nombre a las columnas y eliminar la primera fila 
+names(df2) <- c("Peso","Estatura","Edad","Complexion","Papas_separados","Cantidad_hermanos",
+                                  "Trabaja", "Horas_trab_dia", "Horas_trab_mes", "Salario_mes")
+
+df2 <- df2[-c(1),] 
+
+datos$Horas_trab_dia <- as.numeric(as.numeric_version(df2$Horas_trab_dia))
+datos$Horas_trab_mes <- as.numeric(as.numeric_version(df2$Horas_trab_mes))
+datos$Salario_mes <- as.numeric(as.numeric_version(df2$Salario_mes))
+
+status(datos)
 ```
 
-Otra corrección que se debe realizar es hacer función piso a los valores de Edad, ya que estos fueron ingresados como decimales y eso es erróneo, deben ser considerados como discretos.
+Otra corrección que se debe realizar es hacer función piso a los valores de Edad, ya que estos fueron ingresados como decimales y eso es erróneo porque deben ser considerados como discretos.
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 datos['Edad'] <- floor(datos['Edad'])
@@ -94,7 +112,7 @@ datos['Edad'] <- floor(datos['Edad'])
 
 ## 1.2  Expliquen por medio de tablas esta información. En la tabla debe aparecer simultáneamente la frecuencia y el porcentaje
 
-Es importante recalcar que continuamos realizando análisis exploratorio de la base de datos y respetando las instrucciones de cada subinciso, es por esto que ahora elaboraremos tablas que contengan información sobre la frecuencia y porcentaje de aquellas variables que lo requieren, como lo son: Complexión, Papás separados, Cantidad hermanos, Trabaja y Horas diarias trabajadas. 
+Es importante recalcar que continuamos realizando análisis exploratorio de la base de datos y estamos respetando las instrucciones de cada subinciso, es por esto que ahora elaboraremos tablas que contengan información sobre la frecuencia y porcentaje de aquellas variables que lo requieren, como lo son: Complexión, Papás separados, Cantidad hermanos, Trabaja y Horas diarias trabajadas. 
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 
@@ -109,7 +127,7 @@ final_constitution_frecuency
 
 A partir de esta tabla podemos inferir que el 56% de las personas que se encuentran registradas en la base de datos tienen un cuerpo mesomorfo, es decir, su complexión es intermedia (ni muy delgada ni muy gruesa) y se caracterizan por tener un metabolismo regular.
 
-Por otro lado se observa que el 36% de las observaciones tienen un cuerpo endomorfo, lo que significa que desgraciadamente sufren de sufre peso.
+Por otro lado se observa que el 36% de las observaciones tienen un cuerpo endomorfo, lo que significa que desgraciadamente sufren de sobrepeso.
 
 Y aquellos con complexión ectomorfa (muy delgada) solo cubren el 8% de nuestras observaciones.
 
@@ -182,11 +200,15 @@ sd(datos$Peso)
 
 ```
 
+Podemos notar que en la base de datos el peso más bajo registrado es de 37.85 Kg (que es probable que corresponda a una persona con complexión ectomorfa) y el máximo es de 75.95 Kg. Además, existe una desviación estándar de 8.31 Kg en el peso de las observaciones.
+
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 summary(datos$Estatura)
 sd(datos$Estatura)
 
 ```
+
+La persona con la menor estatura de la base de datos mide 141 cm, mientras que la más alta mide 180 cm. Se cuenta con una desviación estándar de 11.13 cm, lo que significa que hay mucha variación en las estaturas registradas.
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 summary(datos$Edad)
@@ -194,11 +216,16 @@ sd(datos$Edad)
 
 ```
 
+La persona más joven de la base de datos tiene 2 años de edad, mientras que la más grande tiene 33 años. La variable de Edad tiene una desviación estándar de 5 años.
+
+
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 summary(trabajan$Horas_trab_mes)
 sd(trabajan$Horas_trab_mes)
 
 ```
+
+El mínimo de horas laboradas mensualmente es de 1 y el máximo registrado es de 9 horas. Se cuenta con una desviación estándar de casi 3 horas.
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 summary(trabajan$Salario_mes)
@@ -206,14 +233,19 @@ sd(trabajan$Salario_mes)
 
 ```
 
+El salario mensual mínimo de las observaciones registradas es de 1 peso, mientras que el máximo es de 23 pesos. La variable de salario al mes tiene una desviación estándar de 6.58 pesos, que tomando en cuenta nuestro rango de valores (1 - 23) se puede decir que es muy amplia.
+
+
 ## 1.3 Hagan un gráfico donde pueda explicar las variables dependientes.
 
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE, message=FALSE}
 numericas <- datos %>% dplyr::select(Peso, Estatura, Edad,Horas_trab_dia, 
                                      Horas_trab_mes, Salario_mes)
-ggpairs(numericas, title = "Variables númericas dependientes")
+ggpairs(numericas, title = "Variables numéricas dependientes")
 ```
+
+Con esta gráfica podemos notar que la correlación entre las variables numéricas que conforman la base de datos es, en su mayoría, débil. En el caso del salario mensual con respecto a la variable de horas laboradas al mes se observa una correlación de 0.57, la cual es la más alta vista en la gráfica, 
 
 # 1.4 Construyan diferentes gráficos donde puedan mostrar patrones y detalles de la base de datos con respecto a una nueva variable que podemos denominar: “categoría”
 
@@ -260,6 +292,9 @@ ggplot(datos, aes(Categoria, ..count..)) + geom_bar(aes(fill = Trabaja), positio
 
 
 # 2. Metodo de reducción de dimensión (PCA)
+
+Antes de aplicar el método PCA para reducir la dimensión de un conjunto de datos, vamos a re
+
 
 ## 2.1 PCA base de datos PCA1
 Para esta base de datos decidimos aplicar el modelo PCA
