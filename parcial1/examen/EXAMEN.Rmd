@@ -410,11 +410,32 @@ Guiados por la primera gráfica se podría pensar que el número más optimo es 
 
 # 3. Metodo de reducción de dimensión (LDA)
 
+Primeramente debemos realizar un breve análsis exploratorio de la base de datos para entender mejor la información con la que trabajaremos.
+```{r, echo=TRUE,tidy=TRUE}
+datos<-read.csv("Ejercicio 3.csv", sep = ",")
+df_status(datos)
+```
+
+Es posible notar que, al igual que la base de datos del inciso 2.1, contiene 4 variables. Las cuales son: tipo, largo, ancho y alto.
+También se observó que cuenta con 300 observaciones.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+frecuency_as_df<-as.data.frame(tabyl(datos$tipo, sort = TRUE))
+
+names(frecuency_as_df) <- c("Tipo","Frecuencia","Porcentaje")
+
+frecuency_as_df
+
+```
+
+Tipo es una variable nominal que contiene 3 valores: circular, cuadrada y rectangular. Dichos tipos o categorias se encuentran presentes en la base de datos por partes iguales, es decir, existen 100 observaciones que correspondern a cada tipo.
+
+
 ## 3.1 Exploren los datos y encuentren gráficamente sus tendencias y sus posibles correlaciones en gráficos 2D y 3D.
 
 Graficamos los datos y sus correlaciones mediante un modelo 2D y 3D.En la grafica 2D podemos apreciar que las variables tienen una distribución normal y la relación entre el largo y el ancho generan agrupaciones las cuales están bien definidos.
 
-```{r, echo=TRUE,tidy=TRUE}
+```{r, echo=TRUE,tidy=TRUE, warning=FALSE, message=FALSE}
 datos<-read.csv("Ejercicio 3.csv", sep = ",")
 p1 <- ggplot(data = datos, aes(x = largo, fill = tipo)) +
   geom_histogram(position = "identity", alpha = 0.5)
@@ -425,11 +446,16 @@ p3 <- ggplot(data = datos, aes(x = alto, fill = tipo)) +
 ggarrange(p1, p2, p3, nrow = 3, common.legend = TRUE)
 pairs(x = datos[, c("largo","ancho","alto")],
       col = c("blue", "green","red")[datos$tipo], pch = 19,main="Grafica Correlacion 2D")
+```
+ 
+ Es importante destacar en las gráficas de dispersiones se puede apreciar que la relación de largo con respecto al ancho (y viceversa) crea unos gráficos en donde se ven perfectamente la separación de los tipos (circular, rectangular y cuadrada).
+
+```{r, echo=TRUE,tidy=TRUE}
 
 scatterplot3d(datos$largo, datos$ancho, datos$alto,
               color = c("firebrick", "green","blue")[datos$tipo], pch = 19,
               grid = TRUE, xlab = "largo", ylab = "ancho",
-              zlab = "alto", angle = 65, cex.axis = 0.6,main = "Visualizacion 3D")
+              zlab = "alto", angle = 65, cex.axis = 0.6,main = "Visualización 3D")
 legend("topleft",
        bty = "n", cex = 0.8,
        title = "tipo",
