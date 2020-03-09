@@ -225,7 +225,7 @@ sd(trabajan$Horas_trab_mes)
 
 ```
 
-El mínimo de horas laboradas mensualmente es de 1 y el máximo registrado es de 9 horas. Se cuenta con una desviación estándar de casi 3 horas.
+El mínimo de horas laboradas mensualmente es de 20 y el máximo registrado es de 80 horas. Se cuenta con una desviación estándar de casi 20 horas, la cual es muy amplia.
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 summary(trabajan$Salario_mes)
@@ -233,7 +233,9 @@ sd(trabajan$Salario_mes)
 
 ```
 
-El salario mensual mínimo de las observaciones registradas es de 1 peso, mientras que el máximo es de 23 pesos. La variable de salario al mes tiene una desviación estándar de 6.58 pesos, que tomando en cuenta nuestro rango de valores (1 - 23) se puede decir que es muy amplia.
+El salario mensual mínimo de las observaciones registradas es de 800 pesos, mientras que el máximo es de 12000 pesos. La variable de salario al mes tiene una desviación estándar de 2863.7 pesos, que tomando en cuenta nuestro rango de valores (800 - 12000) se puede decir que es muy amplia.
+
+El promedio de 3958 pesos es probable que esté influenciado por datos atípicos
 
 
 ## 1.3 Hagan un gráfico donde pueda explicar las variables dependientes.
@@ -245,7 +247,9 @@ numericas <- datos %>% dplyr::select(Peso, Estatura, Edad,Horas_trab_dia,
 ggpairs(numericas, title = "Variables numéricas dependientes")
 ```
 
-Con esta gráfica podemos notar que la correlación entre las variables numéricas que conforman la base de datos es, en su mayoría, débil. En el caso del salario mensual con respecto a la variable de horas laboradas al mes se observa una correlación de 0.57, la cual es la más alta vista en la gráfica, 
+Con esta gráfica podemos notar que la correlación entre las variables numéricas que conforman la base de datos es, en su mayoría, un tanto débil. En el caso del salario mensual con respecto a la variable de horas laboradas al mes se observa una correlación de 0.799, la cual es de las más altas vistas en la gráfica, pero no es sorpresa porque sabemos que en ocasiones el sueldo mensual depende de las horas que se laboran en ese periodo, como es en el caso de esta base de datos.
+
+Y otra correlación que desde un principio era evidente que sería muy fuerte es la de las horas trabajadas al día con respecto a las horas trabajadas al mes, la cual tien un valor de 0.945.
 
 # 1.4 Construyan diferentes gráficos donde puedan mostrar patrones y detalles de la base de datos con respecto a una nueva variable que podemos denominar: “categoría”
 
@@ -261,6 +265,16 @@ ggplot(dist_personas, aes(x=Categoria, y=Cantidad)) + geom_bar(stat = "identity"
   geom_text(aes(y=Cantidad, label=cantidad_personas), vjust=1.5, color="white", size=3.5, hjust="right")
 ```
 
+Como se puede observar el grupo con más personas es el de "Señor", lo que significa que más del 50% de las personas registradas en la base de datos tienen edades entre 18 a 25 años. En cambio, en las otras 2 categorías existen 22 personas, 11 respectivamente.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+# Personas que trabajan dependiendo su categoría
+ggplot(datos, aes(Categoria, ..count..)) + geom_bar(aes(fill = Trabaja), position = "dodge")
+```
+
+Como era de esperarse, en la categoría junior hay más personas que no trabajan. En el caso de la categoría Señor las personas que sí trabajan triplican a la cantidad que no hace.
+
+
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 # Salario mensual de una persona dependiendo su categoría
 trabajan <- filter(datos, Trabaja == "SI")
@@ -272,8 +286,13 @@ trabajan$Categoria[trabajan$Edad > 25] = "Mayor"
 Observaciones <-c(1:36)
 
 ggplot(trabajan, aes(x= Observaciones, y=Salario_mes, col=Categoria)) + 
-  labs(title="Salario mensual de una persona dependiendo su categoría") + geom_line()
+  labs(title="Salario mensual de una persona dependiendo su categoría") + geom_line()+
+ geom_point(aes(x = Observaciones, y = Salario_mes ))
 ```
+
+Para realizar esta gráfica omitimos aquellas personas que no trabajan de cada categoría. Lo anterior hace posible notar que el grupo con salarios más bajos es el de Junior, mientras que en el de Mayor existe un dato atipico cuyo salario asciende a los 12000 pesos cuando el resto de observaciones de dicha categoría no superan los 5500 pesos.
+
+Se podría decir que la categoría con mejores salarios es la de Señor, pues supera (en algunos casos) a las otras dos agrupaciones. 
 
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
@@ -285,11 +304,7 @@ datos$Categoria[datos$Edad > 25] = "Mayor"
 ggplot(datos, aes(Categoria, ..count..)) + geom_bar(aes(fill = Papas_separados), position = "dodge")
 ```
 
-```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
-# Personas que trabajan dependiendo su categoría
-ggplot(datos, aes(Categoria, ..count..)) + geom_bar(aes(fill = Trabaja), position = "dodge")
-```
-
+Con esta gráfica es posible notar que todas las categorías tienen algo en común, y eso es que predominan personas cuyos padres no están separados.
 
 # 2. Metodo de reducción de dimensión (PCA)
 
@@ -451,3 +466,48 @@ with(datos, {
 ```
 
 Empleando las mismas observaciones con las que se ha generado el modelo discriminante (trainig data), la precisión de clasificación es del 100%.
+
+# 4. Método de reducción de dimensión (CCA)
+
+## 4.1 Exploren los datos y encuentren gráficamente sus tendencias y sus posibles correlaciones.
+
+## 4.2 Apliquen el método CCA paso a paso encontrando todas la matrices de correlación.
+
+## 4.3 Expliquen de forma gráfica como se relacionan estas variables
+
+## 4.4 Construyan como quedaría una posible clasificación de estas observaciones según estas variables.
+
+
+```{r, echo=TRUE,tidy=TRUE}
+data<-read.csv("Ejercicio 4.csv", sep = ",")
+ggpairs(data, title = "Deportistas")
+dataa<-c("peso","altura","edad","ansiedad")
+datos<-data[dataa]
+cov(datos)
+X <-datos[,(1:2)]
+cov(X)
+Y <-datos[,(3:4)]
+cov(Y)
+cov(X,Y)
+cov(Y,X)
+A <-solve(cov(X,X))%*%cov(X,Y)%*%solve(cov(Y,Y))%*%cov(Y,X)
+B <-solve(cov(Y,Y))%*%cov(Y,X)%*%solve(cov(X,X))%*%cov(X,Y)
+eigen(A)$values 
+eigen(B)$values 
+r <-sqrt(eigen(A)$values)
+r
+a <-eigen(A)$vector[,1]
+b <-eigen(B)$vector[,1]
+a
+b
+t(a)%*%cov(X,X)%*%a
+mat_cor  <-matcor(datos,datos)
+mat_cor
+cca1<- cc(datos,datos)
+cca1
+img.matcor(mat_cor,type=2)
+plt.cc(cca1,var.label=T)
+cca2<- cca(datos,datos)
+cca2
+plot(cca2)
+```
