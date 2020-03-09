@@ -76,7 +76,7 @@ df_status(datos)
 
 Existen 7 variables de tipo "factor" el cual es usado para variables categóricas o nominales, lo curioso es que de esas 7 variables, solo 3 (Complexión, Papas separados y Trabaja) son categóricas y las restantes (Peso, Estatura, Edad y Cantidad hermanos) deberían ser numéricas.
 
-Para trabajar con las variables Horas_trab_dia, Horas_trab_mes y Salario_mes también se debe realizar un ajuste a su tipo de dato, porque como se pudo observar, al momento de cambiar los NA por ceros los valores almacenados en esos cambios fueron alterados.
+Para trabajar con las variables Horas_trab_dia, Horas_trab_mes y Salario_mes también se debe realizar un ajuste a su tipo de dato porque, como se pudo observar, al momento de cambiar los NA por ceros los valores almacenados en esos campos fueron alterados.
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE} 
 # Convertir en valores númericos aquellos almacenados en las columnas seleccionadas
@@ -117,12 +117,12 @@ Es importante recalcar que continuamos realizando análisis exploratorio de la b
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 
 #Tabla de frecuencias de complexion
-frecuency_as_df<-as.data.frame(tabyl(datos$Complexion, sort = TRUE))
+frequency_as_df<-as.data.frame(tabyl(datos$Complexion, sort = TRUE))
 
-names(frecuency_as_df) <- c("Complexion","Frecuencia","Porcentaje")
-final_constitution_frecuency<-frecuency_as_df[-c(1),]
+names(frequency_as_df) <- c("Complexion","Frecuencia","Porcentaje")
+final_constitution_frequency<-frequency_as_df[-c(1),]
 
-final_constitution_frecuency
+final_constitution_frequency
 ```
 
 A partir de esta tabla podemos inferir que el 56% de las personas que se encuentran registradas en la base de datos tienen un cuerpo mesomorfo, es decir, su complexión es intermedia (ni muy delgada ni muy gruesa) y se caracterizan por tener un metabolismo regular.
@@ -135,12 +135,12 @@ En conclusión se puede decir que más de la mitad de las personas se encuentran
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 #Tabla de frecuencias de papás_separados
-frecuency_as_df<-as.data.frame(tabyl(datos$Papas_separados, sort = TRUE))
+frequency_as_df<-as.data.frame(tabyl(datos$Papas_separados, sort = TRUE))
 
-names(frecuency_as_df) <- c("Papás_separados","Frecuencia","Porcentaje")
-final_separated_parents_frecuency<-frecuency_as_df[-c(2),]
+names(frequency_as_df) <- c("Papás_separados","Frecuencia","Porcentaje")
+final_separated_parents_frequency<-frequency_as_df[-c(2),]
 
-final_separated_parents_frecuency
+final_separated_parents_frequency
 ```
 
 Sabemos que solo el 20% de los individuos registrados en la base de datos tiene padres separados, esto puede ser por diversas razones, las cuales desconocemos. Esta información puede ser útil para evaluar si el desempeño de una persona o nivel de carga de trabajo se ve influenciado por la relación de sus progenitores.
@@ -148,12 +148,12 @@ Sabemos que solo el 20% de los individuos registrados en la base de datos tiene 
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 #Tabla de frecuencias de cantidad_hermanos
-frecuency_as_df<-as.data.frame(tabyl(datos$Cantidad_hermanos, sort = TRUE))
+frequency_as_df<-as.data.frame(tabyl(datos$Cantidad_hermanos, sort = TRUE))
 
-names(frecuency_as_df) <- c("Cantidad_hermanos","Frecuencia","Porcentaje")
-final_number_of_brothers_frecuency<-frecuency_as_df[-c(7),]
+names(frequency_as_df) <- c("Cantidad_hermanos","Frecuencia","Porcentaje")
+final_siblings_frequency<-frequency_as_df[-c(7),]
 
-final_number_of_brothers_frecuency
+final_siblings_frequency
 ```
 
 Con esta tabla se puede inferir que en esta base de datos predominan las observaciones con menos de 3 hermanos, mientras que aquellas observaciones con más de 3 hermanos son menos frecuentes.
@@ -161,12 +161,12 @@ El número de hermanos es un dato relevante para estudiar si el nivel socioecon�
 
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
 #Tabla de frecuencias de los que trabajan
-frecuency_as_df<-as.data.frame(tabyl(datos$Trabaja, sort = TRUE))
+frequency_as_df<-as.data.frame(tabyl(datos$Trabaja, sort = TRUE))
 
-names(frecuency_as_df) <- c("Trabaja","Frecuencia","Porcentaje")
-final_iswork_frecuency<-frecuency_as_df[-c(3),]
+names(frequency_as_df) <- c("Trabaja","Frecuencia","Porcentaje")
+final_iswork_frequency<-frequency_as_df[-c(3),]
 
-final_iswork_frecuency
+final_iswork_frequency
 ```
 
 De igual forma es importante destacar que el 72% de las personas registradas en la base de datos sí trabaja, mientras que el 28% restante no lo hace, esto puede ser debido a que esos individuos son menores de edad o por factores que no son posibles determinar con la información otorgada por la base de datos.
@@ -178,13 +178,11 @@ trabajan <- filter(datos, Trabaja == "SI")
 
 #Tabla de frecuencias de horas trabajadas x dia
 
-frecuency_as_df<-as.data.frame(tabyl(trabajan$Horas_trab_dia, sort = TRUE))
+frequency_as_df<-as.data.frame(tabyl(trabajan$Horas_trab_dia, sort = TRUE))
 
-names(frecuency_as_df) <- c("Horas_trabajo x dia","Frecuencia","Porcentaje")
-final_worktime_per_day_frecuency<-frecuency_as_df[-c(8),]
+names(frequency_as_df) <- c("Horas_trabajo x dia","Frecuencia","Porcentaje")
 
-final_worktime_per_day_frecuency
-
+frequency_as_df
 ```
 
 Con esta tabla podemos observar que las personas registradas en la base de datos que sí trabajan, lo hacen en promedio entre 1 a 7 horas al día y que el 25% de ellas prefiere laborar medio día (4 horas).
@@ -308,15 +306,33 @@ Con esta gráfica es posible notar que todas las categorías tienen algo en com�
 
 # 2. Metodo de reducción de dimensión (PCA)
 
-Antes de aplicar el método PCA para reducir la dimensión de un conjunto de datos, vamos a re
+Antes de aplicar el método PCA para reducir la dimensión de un conjunto de datos, vamos a realizar un breve análisis exploratorio a la base de datos del inciso 2.1.
 
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+df2<-read.csv("Ejercicio 2.1.csv", sep = ",")
+status(df2)
+
+```
+
+La base de datos contiene 4 variables, las cuales son: tipo, largo, ancho y alto. Además, cabe destacar que esta constituida por 300 observaciones.
+
+```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
+frecuency_as_df<-as.data.frame(tabyl(df2$tipo, sort = TRUE))
+
+names(frecuency_as_df) <- c("Tipo","Frecuencia","Porcentaje")
+
+frecuency_as_df
+
+```
+
+Como podemos observar existen 3 tipos: cama, mueble y silla. Y de cada grupo hay 100 observaciones, es decir su porcentaje de frecuencia es el mismo, 33%.
 
 ## 2.1 PCA base de datos PCA1
 Para esta base de datos decidimos aplicar el modelo PCA
 Como primer paso sacamos el porcentaje de varianza y la graficamos.
 Una vez ya obtenido este punto proseguimos a graficar la correlación.
 ```{r, echo=TRUE,warning=FALSE,tidy=TRUE}
-df2<-read.csv("Ejercicio 2.1.csv", sep = ",")
+
 res.pca <- PCA(df2[,-1], graph = F)
 
 eig.val <- get_eigenvalue(res.pca)
