@@ -366,11 +366,20 @@ fviz_pca_ind(res.pca,
 El modelo logró agrupar correctamente las observaciones de la base de datos.
 
 ## 2.2 PCA base de datos PCA2
-Aplicamos el modelo PCA para obtener el numero óptimo de componentes principales, debido que el conjunto de datos contaba más de 200 variables.
-Graficando la varianza acumulada podremos obtener lo siguiente:
-```{r, echo=TRUE,tidy=TRUE}
+
+Antes de aplicar el método PCA para reducir la dimensión de un conjunto de datos, vamos a realizar un breve análisis exploratorio a la base de datos del inciso 2.1.
+
+```{r, echo=TRUE,tidy=TRUE, warning=FALSE}
 url<-"http://web.stanford.edu/~hastie/ElemStatLearn//datasets/zip.digits/train.2"
 data<-read.csv(url)
+
+```
+
+Esta base de datos es más grande que las anteriores, cuenta con 730 observaciones y 256 variables, mismas que se pretende reducir a través del modelo PCA, con el cual obtendremos el número óptimo de componentes principales que describen la mayor cantidad de información del conjunto de datos sin necesidad de utilizar una enorme cantidad de predictores. 
+
+Graficando la varianza acumulada, y guiados por el método del codo, podremos obtener lo siguiente:
+
+```{r, echo=TRUE,tidy=TRUE, warning=FALSE}
 
 data.pca = scale(data)
 data.pca <- prcomp(data, center = F, scale=T)
@@ -379,7 +388,7 @@ prop_varianza_acum <- cumsum(prop_varianza)
 
 ggplot(data = data.frame(prop_varianza, pc = 1:256),
        aes(x = pc, y = prop_varianza)) +
-  xlim(0, 50) +
+  xlim(0, 25) +
   geom_col(width = 0.3) +
   scale_y_continuous(limits = c(0,.5)) +
   theme_bw() +
@@ -388,6 +397,7 @@ ggplot(data = data.frame(prop_varianza, pc = 1:256),
 
 ggplot(data = data.frame(prop_varianza_acum, pc = 1:256),
        aes(x = pc, y = prop_varianza_acum, group = 1)) +
+  xlim(0,18)+
   geom_point() +
   geom_line() +
   geom_label(aes(label = round(prop_varianza_acum,2))) +
@@ -396,7 +406,7 @@ ggplot(data = data.frame(prop_varianza_acum, pc = 1:256),
        y = "Prop. varianza explicada acumulada")
 ```
 
-Una vez viendo la representación grafica podemos concluir que un numero óptimo de dimenciones para esta base de datos sería aproximadamente 10.
+Guiados por la primera gráfica se podría pensar que el número más optimo es de 10 aproximadamente, sin embargo al observar la gráfica 2 es posible notar que un valor más acertado es 18, con el cual se describe un 82% de los datos originales y con lo cual estaríamos reduciendo bastante la dimensionalidad de la base de datos que inicialmente era de 256.
 
 # 3. Metodo de reducción de dimensión (LDA)
 
