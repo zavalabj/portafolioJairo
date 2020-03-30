@@ -1,0 +1,77 @@
+---
+title: "Métodos de particionamiento"
+author: "Regina Berges"
+date: "30 de marzo de 2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+El código a continuación genera los datos con los que se trabajará este proyecto. 
+
+```{r cars}
+library(mvtnorm)
+# Generamos los datos
+n1 <- n2 <- n3 <- 100
+d <- 3    # día de nacimiento
+m <- 2    # mes de nacimiento
+a <- 1999 # año de nacimiento
+
+d1 <- round(d/30, 2)
+d2 <- round(m/12, 2)
+d3<-round(a/2020, 2)
+
+# Matrices de covarianza
+s1 <- matrix(c(1, d1, d1, 1), ncol = 2)
+s2 <- matrix(c(1.5, d2, d2, 1.5), ncol = 2)
+s3 <- matrix(c(2, d3, d3, 2), ncol = 2)
+
+# Vector de medias
+m1 <- c(m,m)
+m2 <- m1+m
+m3 <- m2+m
+
+set.seed(a)
+x1 <-rmvnorm(n1, m1, s1)
+x2 <-rmvnorm(n2, m2, s2)
+x3 <-rmvnorm(n3, m3, s3)
+
+x <- c(x1[,1], x2[,1], x3[,1])
+y <- c(x1[,2], x2[,2], x3[,2])
+
+# Datos para trabajar
+dataset <- data.frame(cbind(x, y))
+
+```
+
+## Análisis exploratorio
+
+```{r pressure, echo=FALSE}
+summary(dataset)
+```
+
+
+```{r pressure, echo=FALSE, warning=FALSE, tidy=TRUE}
+library(ggplot2)
+
+
+ggplot()+ geom_point(aes(x = x, y = y), data = dataset, alpha = 0.5) + ggtitle('Conjunto de datos')
+```
+
+La primera impresión que se obtiene al observar esta gráfica es que realmente no hay una clara separación de las observaciones, lo que significa que será complicado realizar agrupaciones lo más correctas posibles.
+
+## 1. Métodos de particionamiento
+
+```{r pressure, echo=FALSE}
+
+```
+
+## 2. Método de evaluación
+
+```{r pressure, echo=FALSE}
+
+```
+
+
