@@ -81,9 +81,18 @@ labs(title= "Número óptimo de agrupaciones") +
   ylab("Suma de cuadrados internos")
 ```
 
-Para seleccionar el valor óptimo de k, se debe seleccionar aquel punto en donde ya no se dejan de producir variaciones importantes del valor de WSS al aumentar k. En este caso, esto se produce a partir de $k≥3$, por lo que se evaluarán los resultados del agrupamiento, por ejemplo, con los valores de 3, 4 y 5 a fin de observar el comportamiento del modelo.
+Para seleccionar el valor óptimo de k, se debe seleccionar aquel punto en donde ya no se dejan de producir variaciones importantes del valor de WSS al aumentar k. En este caso, esto se produce a partir de $k≥3$, por lo que se evaluarán los resultados del agrupamiento con ese valor, a fin de observar el comportamiento del modelo.Pero antes de realizar la comprobación del modelo, y a fin de demostrar que el valor de $k$ con el que se trabajará es el número óptimo de cluster, se usará el *método silhouette*, para que nos arroje automáticamente el valor ideal de $k$.
 
-Primero se aplicará el método de k-medias con $k = 3$.
+```{r pressure, echo=FALSE}
+fviz_nbclust(data, kmeans, method = "silhouette",k.max = 10,
+             diss = get_dist(data, method = "euclidean"), nstart = 50)+
+  labs(title= "Número óptimo de agrupaciones") + 
+  xlab("k ") +
+  ylab("Ancho medio entre grupos")
+
+```
+
+Se puede observar que este método, al igual que el método del codo, nos indica que $k=3$ es el número óptimo de clusters con el que se debe trabajar. El siguiente paso es utilizar la técnica de k-medias con dicho valor de k.
 
 ```{r pressure, echo=FALSE}
 set.seed(a)
@@ -96,6 +105,8 @@ ggplot() + geom_point(aes(x = x, y = y, color = cluster), data = data, size = 2)
   ggtitle('Clusters de Datos con k = 3') + 
   xlab('X') + ylab('Y')
 ```
+
+### K-Medoides
 
 ### Clara
 
