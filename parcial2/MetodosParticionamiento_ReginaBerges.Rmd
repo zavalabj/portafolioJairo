@@ -93,20 +93,18 @@ fviz_nbclust(data, kmeans, method = "silhouette",k.max = 10,
 
 ```
 
-Se puede observar que este método, al igual que el método del codo, nos indica que $k=3$ es el número óptimo de clusters con el que se debe trabajar. El siguiente paso es utilizar la técnica de k-medias con dicho valor de k.
+Se hará una tercera y última comprobación utilizando el método de *estadísticas gap*.
 
-```{r pressure, echo=FALSE}
+```{r pressure, echo=FALSE,warning=FALSE, tidy=TRUE}
 set.seed(a)
-kmedias <- kmeans(data[, c("x", "y")], iter.max = 1000, centers = 3, nstart = 50)
-
-data$cluster <- kmedias$cluster
-ggplot() + geom_point(aes(x = x, y = y, color = cluster), data = data, size = 2) +
-  scale_colour_gradientn(colours=rainbow(3)) +
-  geom_point(aes(x = kmedias$centers[, 1], y = kmedias$centers[, 2]), color = 'black', size = 3) + 
-  ggtitle('Clusters de Datos con k = 3') + 
-  xlab('X') + ylab('Y')
+fviz_nbclust(data, kmeans, method = "gap_stat", k.max = 10, 
+             diss = get_dist(my_data, method = "euclidean"), nstart = 50)+
+  labs(title= "Número óptimo de cluster") + 
+  xlab("k ") +
+  ylab("Estadísticas Gap")
 ```
-Concluyendo que debemos quedarnos con $k=3$ grupos y la clasificación óptima de los datos de este conjunto por este método sería:
+
+Se puede observar que este método, al igual que los otros dos empleados, nos indica que $k=3$ es el número óptimo de clusters con el que se debe trabajar. El siguiente paso es utilizar la técnica de k-medias con dicho valor de k.
 
 ```{r pressure, echo=FALSE}
 set.seed(a)
@@ -121,23 +119,38 @@ ggplot() + geom_point(aes(x = x, y = y, color = cluster), data = data, size = 2)
 
 ### K-Medoides
 
+```{r pressure, echo=FALSE,warning=FALSE, tidy=TRUE}
+library("cluster")
+kmedoides <- pam(data, 3)
+fviz_cluster(kmedoides, data = data)
+
+```
+
 ### Clara
 
 ```{r pressure, echo=FALSE}
-
+clarax <- clara(data, 3)
+fviz_cluster(clarax, data = data)
 ```
 
 ### Cluster jerárquico
 
 ```{r pressure, echo=FALSE}
-
+res <- hcut(data, k = 3)
+fviz_dend(res, rect = TRUE, cex = 0.5,
+          k_colors = c("red","blue", "green")) 
 ```
 
 
 ## 2. Método de evaluación
 
-```{r pressure, echo=FALSE}
-
+```{r pressure, echo=FALSE, warning=FALSE, tidy=TRUE}
+library("clValid")
+validclus  <- clValid(data, nClust = 2:6, 
+                clMethods = c("hierarchical","kmeans","pam","clara"),
+                validation = "internal")
+summary(validclus)
+plot(validclus)
 ```
 
 
