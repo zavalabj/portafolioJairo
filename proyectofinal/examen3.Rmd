@@ -50,8 +50,11 @@ library(dummies)
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE, tidy=FALSE}
 # Datos obtenidos de https://coronavirus.gob.mx/datos/#DownZCSV
-setwd("C:/Users/regina/Desktop")
-df_mex <- read.csv("200521COVID19MEXICO.csv", sep = ",")
+#setwd("C:/Users/regina/Desktop")
+#df_mex <- read.csv("200521COVID19MEXICO.csv", sep = ",")
+
+download.file("https://github.com/zavalabj/portafolioJairo/blob/master/proyectofinal/200521COVID19MEXICO.csv", destfile = "covid19_mex.csv")
+df_mex <- read.csv(file = "covid19_mex.csv")
 
 ```
 
@@ -105,9 +108,10 @@ round(prop.table(table(qroo$RESULTADO))*100,0)
 
 Ahora nuestra segunda tabla, la cual es de porcentajes, indica que el 56% de los resultados son positivos, mientras que el 44% restante son negativos para nuestro nuevo total de 2602 observaciones. 
 
-Como la mayoría de las variables con las que estaremos trabajando para crear el modelo de predicción son nominales, usaremos la función de *dummy variables* para poder conseguir mejores resultados. A continuación se presenta el catálogo de valores cualitativos manejados por cada una de las variables seleccionadas.
+Como la mayoría de las variables con las que estaremos trabajando para crear el modelo de predicción son nominales, usaremos la función de *dummy variables* para poder conseguir mejores resultados. Al convertirlas a *dummy variables* los valores que tendrán las observaciones en esos campos serán binarios, donde 1 representa "SÍ" y 0 represent "NO".
 
-Al convertirlas a *dummy variables* los valores que tendrán las observaciones en esos campos serán binarios, donde 1 representa "SÍ" y 0 represent "NO".
+A continuación se presenta el catálogo de valores cualitativos manejados por cada una de las variables seleccionadas.
+
 
 ![CLAVES DE LOS MUNICIPIOS DE QUINTANA ROO](C:/Users/regina/Desktop/ProyectoMineria/municipio_claves.png)
 
