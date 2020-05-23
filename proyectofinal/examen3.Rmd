@@ -1,0 +1,283 @@
+---
+title: 'Examen 3: ClasificaciÓn supervisada'
+author: "ByteMiners"
+date: "22 de mayo de 2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Aplicación de métodos supervisados para el análisis de datos en materia de COVID-19 en Quintana Roo
+
+## Planteamiento del problema
+
+El COVID-19 es un tema de alta importancia y relevancia en nuestro tiempo debido a que actualmente afecta a toda la población pero aún más a las personas con enfermedades crónicas, las cuales se encuentran en una situación de riesgo mayor.
+
+Este proyecto pretende brindar un modelo de predicción con los datos que ya existen para determinar si los pacientes caen en la categoría de infectados o no infectados. Este proyecto se realizó con datos obtenidos hasta el 21/05/2020. Los últimos datos subidos a la página del gobierno de México en el momento de análisis.
+
+
+## Antecedentes y justificación
+
+El nuevo coronavirus Covid-19 tuvo su origen en la ciudad de Wuhan, en China. A mediados del mes de diciembre de 2019, las autoridades sanitarias de Wuhan detectaron una serie de casos de neumonía producida por una causa desconocida.
+
+En ese momento se originó una alarma sobre una nueva enfermedad desconocida hasta el momento.
+El actual coronavirus (COVID-19) afecta a más de 118 países en todo el mundo, sin embargo, en el presente trabajo se eligió al estado de Quintana Roo para el presente análisis, el cual se describe más adelante en el presente documento.
+
+
+## Marco teórico
+
+El presente trabajo utilizará el algoritmo KNN (K Nearest Neighbours), el cual es un algoritmo de aprendizaje supervisado, el cual a partir de datos iniciales, su objetivo inicial será el clasificar de manera eficiente los nuevos datos.
+
+La forma de trabajar de este algoritmo es muy sencilla, cada dato nuevo será clasificado según K vecinos que este posea cerca de un grupo o de otro. Calculará la distancia menor para poder seleccionar el grupo al cual pertenece.
+
+## Marco metodológico
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, tidy=FALSE}
+# Librerías para el proyecto
+library(dplyr)
+library(corrgram)
+library(kknn)
+library(class)
+library(gmodels)
+library(caret)
+library(dummies)
+```
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, tidy=FALSE}
+# Datos obtenidos de https://coronavirus.gob.mx/datos/#DownZCSV
+setwd("C:/Users/regina/Desktop")
+df_mex <- read.csv("200521COVID19MEXICO.csv", sep = ",")
+
+```
+
+La base de datos obtenida contiene información a nivel nacional sobre los pacientes a los cuales se les ha hecho la prueba del COVID-19. Para enfocarnos exclusivamente en el estado de Quintana Roo, se decidió filtrar aquellos registros que en el campo ENTIDAD_RES tuvieran el número 23. Ya que en ese campo se coloca identifica la entidad de residencia del paciente y el valor 23 representa nuestra entidad.
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+# Quitana Roo posee el número 23 como clave de entidad
+qroo <- filter(df_mex, ENTIDAD_RES == 23)
+#write.csv(qroo,"C:/Users/regina/Desktop/covid19_qroo.csv", row.names = FALSE)
+```
+
+Se contempló para el presente proyecto utilizar 2 de los 3 estados posibles para cada registro en el conjunto de datos, la clave 1 para positivo y la 2 para negativo en la prueba de SARS-COV-2. En la siguiente tabla se muestran los estados posibles que puede tener cada registro:
+
+![CLAVES DE CAMPO RESULTADO](C:/Users/regina/Desktop/ProyectoMineria/resultados.png)
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+# Visualizar resultados, donde:
+# 1 = POSITIVO
+# 2 = NEGATIVO
+# 3 = PENDIENTE
+
+# Cambiar valor de campo RESULTADO
+qroo$RESULTADO[qroo$RESULTADO == 1] <- "POSITIVO"
+qroo$RESULTADO[qroo$RESULTADO == 2] <- "NEGATIVO"
+qroo$RESULTADO[qroo$RESULTADO == 3] <- "PENDIENTE"
+
+table(qroo$RESULTADO)
+
+#Tabla de porcentajes
+round(prop.table(table(qroo$RESULTADO))*100,0)
+``` 
+
+Como podemos observar, hasta el día jueves 21 de mayo de 2020, se tenían registrados en total 2822 resultados de pacientes a los que se les realizó la prueba para diagnosticar el COVID-19.  Y en la tabla se muestra la distribución de los 3 grupos posibles de resultados.
+
+Con la segunda tabla podemos ver que el 51% de los resultados han sido positivos; el 41% negativos y el 8% restante se encontraban pendientes de resultado.
+
+Ahora procederemos a conserva únicamente aquellas observaciones cuyo campo de resultado sea diferente de "PENDIENTE".
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+
+qroo <- qroo %>% select(RESULTADO, SEXO, NACIONALIDAD, MUNICIPIO_RES, EDAD, TIPO_PACIENTE, DIABETES, ASMA, HIPERTENSION)
+
+qroo <- filter(qroo, RESULTADO != "PENDIENTE")
+
+table(qroo$RESULTADO)
+
+#Tabla de porcentajes
+round(prop.table(table(qroo$RESULTADO))*100,0)
+
+``` 
+
+Ahora nuestra segunda tabla, la cual es de porcentajes, indica que el 56% de los resultados son positivos, mientras que el 44% restante son negativos para nuestro nuevo total de 2602 observaciones. 
+
+Como la mayoría de las variables con las que estaremos trabajando para crear el modelo de predicción son nominales, usaremos la función de *dummy variables* para poder conseguir mejores resultados. A continuación se presenta el catálogo de valores cualitativos manejados por cada una de las variables seleccionadas.
+
+Al convertirlas a *dummy variables* los valores que tendrán las observaciones en esos campos serán binarios, donde 1 representa "SÍ" y 0 represent "NO".
+
+![CLAVES DE LOS MUNICIPIOS DE QUINTANA ROO](C:/Users/regina/Desktop/ProyectoMineria/municipio_claves.png)
+
+![CLAVES DE CAMPO SEXO](C:/Users/regina/Desktop/ProyectoMineria/sexo.png)
+
+![CLAVES DE CAMPO NACIONALIDAD](C:/Users/regina/Desktop/ProyectoMineria/nacionalidad.png)
+
+![CLAVES DE CAMPOS DIABETES, HIPERTENSIÓN Y ASMA](C:/Users/regina/Desktop/ProyectoMineria/catalogo_si_no.png)
+
+![CLAVES DE TIPOS DE PACIENTES](C:/Users/regina/Desktop/ProyectoMineria/tipo_paciente.png)
+
+Cabe aclarar que este campo identifica el tipo de atención que recibió el paciente en la unidad. Se denomina como ambulatorio si regresó a su casa o se denomina como hospitalizado si fue ingresado a hospitalización.
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+
+# Comenzaremos generando "dummy variables" con el campo SEXO
+qroo <- cbind(qroo, dummy(qroo$SEXO, sep = "_"))
+
+#Eliminar columna SEXO
+qroo <- qroo %>% select(-SEXO)
+
+#Cambiar nombre de columnas de los sexos
+names(qroo)[names(qroo) == "qroo_1"] <- "MUJER"
+names(qroo)[names(qroo) == "qroo_2"] <- "HOMBRE" 
+```
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+# Generar "dummy variables" con el campo TIPO_PACIENTE
+qroo <- cbind(qroo, dummy(qroo$TIPO_PACIENTE, sep = "_"))
+
+#Eliminar columna TIPO_PACIENTE
+qroo <- qroo %>% select(-TIPO_PACIENTE)
+
+#Cambiar nombre de columnas de los tipos de pacientes
+names(qroo)[names(qroo) == "qroo_1"] <- "AMBULATORIO"
+names(qroo)[names(qroo) == "qroo_2"] <- "HOSPITALIZADO" 
+
+```
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+# Generar "dummy variables" con el campo NACIONALIDAD
+qroo <- cbind(qroo, dummy(qroo$NACIONALIDAD, sep = "_"))
+
+#Eliminar columna NACIONALIDAD
+qroo <- qroo %>% select(-NACIONALIDAD)
+
+#Cambiar nombre de columnas de las nacionalidades
+names(qroo)[names(qroo) == "qroo_1"] <- "NAC_MEXICANA"
+names(qroo)[names(qroo) == "qroo_2"] <- "NAC_EXTRANJERA" 
+```
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+# Generar "dummy variables" con el campo MUNICIPIO_RES
+qroo <- cbind(qroo, dummy(qroo$MUNICIPIO_RES, sep = "_"))
+
+#Eliminar columna MUNICIPIO_RES
+qroo <- qroo %>% select(-MUNICIPIO_RES)
+
+#Cambiar nombre de columnas de los municipios
+names(qroo)[names(qroo) == "qroo_1"] <- "COZUMEL"
+names(qroo)[names(qroo) == "qroo_2"] <- "FCP" #FELIPE CARRILLO PUERTO
+names(qroo)[names(qroo) == "qroo_3"] <- "ISLA_MUJERES"
+names(qroo)[names(qroo) == "qroo_4"] <- "OPB" #OTHÓN P. BLANCO
+names(qroo)[names(qroo) == "qroo_5"] <- "BENITO_JUAREZ"
+names(qroo)[names(qroo) == "qroo_6"] <- "JMM" #JOSÉ MARÍA MORELOS
+names(qroo)[names(qroo) == "qroo_7"] <- "LAZARO_CARDENAS"
+names(qroo)[names(qroo) == "qroo_8"] <- "SOLIDARIDAD" #FELIPE CARRILLO PUERTO
+names(qroo)[names(qroo) == "qroo_9"] <- "TULUM"
+names(qroo)[names(qroo) == "qroo_10"] <- "BACALAR" #FELIPE CARRILLO PUERTO
+names(qroo)[names(qroo) == "qroo_11"] <- "PUERTO_MORELOS"
+```
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+# Generar "dummy variables" con el campo DIABETES
+qroo <- cbind(qroo, dummy(qroo$DIABETES, sep = "_"))
+
+#Eliminar columna DIABETES
+qroo <- qroo %>% select(-DIABETES)
+
+#Cambiar nombre de columnas de diabetes
+names(qroo)[names(qroo) == "qroo_1"] <- "SI_DIABETES"
+names(qroo)[names(qroo) == "qroo_2"] <- "NO_DIABETES" 
+names(qroo)[names(qroo) == "qroo_98"] <- "SE_IGNORA_DIABETES"
+```
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+# Generar "dummy variables" con el campo ASMA
+qroo <- cbind(qroo, dummy(qroo$ASMA, sep = "_"))
+
+#Eliminar columna ASMA
+qroo <- qroo %>% select(-ASMA)
+
+#Cambiar nombre de columnas de asma
+names(qroo)[names(qroo) == "qroo_1"] <- "SI_ASMA"
+names(qroo)[names(qroo) == "qroo_2"] <- "NO_ASMA" 
+names(qroo)[names(qroo) == "qroo_98"] <- "SE_IGNORA_ASMA" 
+```
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+# Generar "dummy variables" con el campo HIPERTENSION
+qroo <- cbind(qroo, dummy(qroo$HIPERTENSION, sep = "_"))
+
+#Eliminar columna HIPERTENSION
+qroo <- qroo %>% select(-HIPERTENSION)
+
+#Cambiar nombre de columnas de hipertensión
+names(qroo)[names(qroo) == "qroo_1"] <- "SI_HIPERTENSION"
+names(qroo)[names(qroo) == "qroo_2"] <- "NO_HIPERTENSION" 
+names(qroo)[names(qroo) == "qroo_98"] <- "SE_IGNORA_HIPERTENSION" 
+``` 
+
+
+El modelo que usamos trabajará con un conjunto de entrenamiento, el cual contendrá el 80% de las observaciones de la base de datos, mismas que serán seleccionadas de manera aleatoria, mientras que el conjunto de prueba estará conformado por el 20% restante.
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+set.seed(22)
+n <- dim(qroo)[1] #num. observaciones
+num_obs <- ceiling(n*0.8) #num. de observaciones que irán al conjunto de entrenamiento
+ind <- sample (x = 1:n, size = num_obs, replace = FALSE) #seleccionar aleatoriamente num_obs de 1 a n
+
+entrenamiento <- qroo[ind,]
+prueba <- qroo[-ind,]
+
+#quitamos la información de la etiqueta
+entrenamiento_labels <- as.factor(entrenamiento$RESULTADO)
+prueba_labels <- as.factor(prueba$RESULTADO)
+
+entrenamiento <- entrenamiento %>% select(-RESULTADO)
+prueba <- prueba %>% select(-RESULTADO)
+
+``` 
+
+Al emplear el método de clasificación *KNN*, las observaciones de prueba se comparan con los registros más similares en el conjunto de entrenamiento utilizando una función de distancia, y a cada observación se le asigna la etiqueta dada por la mayoria de sus vecinos. Como número k, usaremos la raiz cuadrada del total de observaciones, el cual es 51.
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+
+pred <- knn(entrenamiento, prueba, cl = entrenamiento_labels, k = 51)
+
+confusionMatrix(data = pred, reference = prueba_labels)
+
+``` 
+
+Podemos notar que al usar $k=51$, con el modelo creado se consigue una exactitud del $59.62%$ al momento de acertar en una predicción, el cual es un porcentaje muy bajo y por tal motivo, emplearemos la función *train.kknn()* para ver cuál es el valor más óptimo de $k$ que nos recomienda dicha función. 
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+
+train.kknn(entrenamiento_labels ~ ., data = entrenamiento, kmax = 51)
+``` 
+
+Obtuvimos como valor más óptimo el número 18, como se recomienda redondear a un número impar para evitar un empate entre categorías, probaremos con $k=19$.
+
+```{r echo=TRUE, warning=FALSE, tidy=TRUE}
+
+pred <- knn(entrenamiento, prueba, cl = entrenamiento_labels, k = 19)
+
+confusionMatrix(data = pred, reference = prueba_labels)
+
+``` 
+
+Al probar nuestro modelo con $k=19$ obtuvimos el mismo porcentaje de precisión que en la prueba anterior.
+
+En conclusión podemos decir que con el método de clasificación de KNN es muy difícil predecir de manera acertada los resultados de las pruebas de COVID-19 aquí en Quintana Roo, ya que arroja casi un 40% de errores. Lo anterior se puede deber a distintos factores, sin embargo el análisis de este tipo de información es de vital importancia hoy en día y es por eso que se debe considerar la mejora de modelos predictivos.
+
+
+## Referencias
+
+CONACYT et al. (2020). *Covid-19 México*. Recuperado el 21 de mayo de 2020, de: https://coronavirus.gob.mx/datos/
+
+Almeida, R. (2018).*How do I deal with (normalise) category data for machine learning?*. Recuperado el 21 de mayo de 2020, de: https://www.researchgate.net/post/How_do_I_deal_with_normalise_category_data_for_machine_learning
+
+Ruíz, S. (2017). *El algoritmo K-NN y su importancia en el modelado de*. Recuperado el 21 de mayo de 2020, de:
+datoshttps://www.analiticaweb.es/algoritmo-knn-modelado-datos/
+
